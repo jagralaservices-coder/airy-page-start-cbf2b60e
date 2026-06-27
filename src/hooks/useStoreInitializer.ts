@@ -616,7 +616,7 @@ export const useStoreInitializer = () => {
     initInProgress.current = true;
 
     console.log('[StoreInit] Initializing store session:', storeId);
-    toast.info('Syncing store data from cloud...', { duration: 3000 });
+    // Silent background sync — no toast banner.
 
     try {
       const success = await fullCloudDownload(storeId, isStoreLogin, callbacks);

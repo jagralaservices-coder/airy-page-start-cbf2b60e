@@ -400,44 +400,8 @@ export const AppHeader: React.FC = () => {
         {/* Divider */}
         <div className="w-px h-8 bg-border mx-1 flex-shrink-0" />
 
-        {/* Generate Demo Data Button — super_admin only */}
-        {userRole?.role === 'super_admin' && (
-        <Button
-          variant="outline"
-          size="sm"
-            onClick={async () => {
-              try {
-                toast({ title: 'Generating demo data...', description: 'This may take a moment. Please wait...' });
-                try {
-                  const { data, error } = await supabase.functions.invoke('generate-demo-data', {
-                    body: { email: user?.email, name: user?.user_metadata?.full_name, storeId: activeStore?.id }
-                  });
-                  if (error) throw error;
-                  if (!data?.success) throw new Error(data?.error || 'Unknown error');
-                } catch (edgeError) {
-                  console.log("Edge function failed, falling back to local generation...", edgeError);
-                  // Fallback to client-side generation
-                  const { generateClientDemoData } = await import('@/lib/demoData');
-                  if (activeStore?.id) {
-                    await generateClientDemoData(activeStore.id, user?.id || 'demo');
-                  } else {
-                    throw new Error("No active store to generate data for.");
-                  }
-                }
-                toast({ title: 'Success', description: 'Demo data generated successfully! Please refresh the page.' });
-                setTimeout(() => window.location.reload(), 2000);
-              } catch (e: any) {
-                console.error("Demo gen error:", e);
-                toast({ title: 'Error', description: e.message || 'Failed to generate demo data', variant: 'destructive' });
-              }
-            }}
-            className="h-9 gap-1.5 flex-shrink-0 border-primary text-primary hover:bg-primary/10"
-            title="Generate Demo Data (90 Days) — Super Admin only"
-          >
-          <Database className="w-4 h-4" />
-          <span className="hidden lg:inline">Generate Demo Data</span>
-        </Button>
-        )}
+        {/* Generate Demo Data button removed — demo data is no longer seeded into new stores. */}
+
 
         {/* Edit UI / Customize */}
         <Button
