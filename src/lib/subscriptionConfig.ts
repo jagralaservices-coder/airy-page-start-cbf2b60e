@@ -156,11 +156,6 @@ export const RETAIL_TIER_LIMITS: Record<SubscriptionTier, TierLimits> = {
   platinum: { maxStaff: 25, maxOutlets: 2, maxReports: 999 },
   custom: { maxStaff: 999, maxOutlets: 1, maxReports: 999 },
 };
-  basic: { maxStaff: 2, maxOutlets: 1, maxReports: 4 },
-  gold: { maxStaff: 5, maxOutlets: 1, maxReports: 6 },
-  platinum: { maxStaff: 10, maxOutlets: 2, maxReports: 999 },
-  custom: { maxStaff: 999, maxOutlets: 1, maxReports: 999 },
-};
 
 export const PLAN_PRICING: Record<SubscriptionTier, number> = {
   basic: 7999,
