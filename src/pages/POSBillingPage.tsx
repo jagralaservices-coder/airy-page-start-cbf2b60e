@@ -1472,14 +1472,14 @@ export const POSBillingPage: React.FC = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="icon"
-                      className="h-12 w-12 flex-shrink-0 relative"
+                      className="h-12 w-12 flex-shrink-0 relative bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={() => setShowHeldBills(!showHeldBills)}
                     >
                       <Play className="w-[22px] h-[22px]" />
                       {heldBills.length > 0 && (
-                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold">
                           {heldBills.length}
                         </span>
                       )}
