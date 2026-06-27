@@ -45,7 +45,7 @@
         "@reduxjs/toolkit": "^2.12.0",
         "@supabase/supabase-js": "^2.89.0",
         "@tanstack/query-sync-storage-persister": "^5.101.0",
-        "@tanstack/react-query": "^5.83.0",
+        "@tanstack/react-query": "^5.101.0",
         "@tanstack/react-query-persist-client": "^5.101.0",
         "capacitor-thermal-printer": "^0.2.5",
         "class-variance-authority": "^0.7.1",
@@ -760,7 +760,7 @@
 
     "@tanstack/query-sync-storage-persister": ["@tanstack/query-sync-storage-persister@5.101.1", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@tanstack/query-sync-storage-persister/-/query-sync-storage-persister-5.101.1.tgz", { "dependencies": { "@tanstack/query-core": "5.101.1", "@tanstack/query-persist-client-core": "5.101.1" } }, "sha512-IBb5oYZ6ZBRz4KiBsqO0ufdZd77Jg91yFswULstGB6fSaAJA2mdwCa5jhfjmPMhVl/hRLstFZLS11CIQVMKjCg=="],
 
-    "@tanstack/react-query": ["@tanstack/react-query@5.83.0", "", { "dependencies": { "@tanstack/query-core": "5.83.0" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-/XGYhZ3foc5H0VM2jLSD/NyBRIOK4q9kfeml4+0x2DlL6xVuAcVEW+hTlTapAmejObg0i3eNqhkr2dT+eciwoQ=="],
+    "@tanstack/react-query": ["@tanstack/react-query@5.101.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@tanstack/react-query/-/react-query-5.101.2.tgz", { "dependencies": { "@tanstack/query-core": "5.101.2" }, "peerDependencies": { "react": "^18 || ^19" } }, "sha512-seDkr6kzGzX1okaaTtZPtgA688CDPlXUz1C6xSg0ESqn04Vuc8tlrYms1s3de+znBqhPVxFRfpAfUf+6XvfPWg=="],
 
     "@tanstack/react-query-persist-client": ["@tanstack/react-query-persist-client@5.101.1", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@tanstack/react-query-persist-client/-/react-query-persist-client-5.101.1.tgz", { "dependencies": { "@tanstack/query-persist-client-core": "5.101.1" }, "peerDependencies": { "@tanstack/react-query": "^5.101.1", "react": "^18 || ^19" } }, "sha512-bBSne+3+28EZ/Ch5a06J0YQi6d5yaT2G+vyHAyhzwzYA1FAEAFe6Ou6TsNVQaT6ef6pFShU73FL/NB4guTWNng=="],
 
@@ -2094,7 +2094,7 @@
 
     "@rollup/pluginutils/rollup": ["rollup@2.79.2", "", { "optionalDependencies": { "fsevents": "~2.3.2" }, "bin": "dist/bin/rollup" }, "sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ=="],
 
-    "@tanstack/react-query/@tanstack/query-core": ["@tanstack/query-core@5.83.0", "", {}, "sha512-0M8dA+amXUkyz5cVUm/B+zSk3xkQAcuXuz5/Q/LveT4ots2rBpPTZOzd7yJa2Utsf8D2Upl5KyjhHRY+9lB/XA=="],
+    "@tanstack/react-query/@tanstack/query-core": ["@tanstack/query-core@5.101.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@tanstack/query-core/-/query-core-5.101.2.tgz", {}, "sha512-hH5MLoJhF7KaIGd7q3xTXGXvslI+GYlM1Z/35aSHHWaCJWB7XvTSHYuV3eM7tw+aE0mT/xMro4M4Q9rCGHT0lw=="],
 
     "@types/cacheable-request/@types/node": ["@types/node@24.13.2", "https://europe-west1-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/@types/node/-/node-24.13.2.tgz", { "dependencies": { "undici-types": "~7.18.0" } }, "sha512-fRa09kZTgu8o71KFcDjUFuc7F+dEbZYZmkI0mg5YBTRs0yMKjYHsq/c0urDKeDb+D5qVgXOdFcuu+DZPKOITwA=="],
 
