@@ -491,32 +491,29 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     void supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         // Do NOT force sign-out on transient refresh errors — keep user logged in.
+        // Supabase's autoRefreshToken will retry the refresh; meanwhile restore from cached backup.
         console.warn('[Auth] getSession warning (keeping session):', error.message);
-        
-        // If there's a transient error, try to restore from backup instead of passing null session
+
         const sessionActive = localStorage.getItem('pos_session_active') === 'true';
         if (sessionActive) {
           const sessionBackupStr = localStorage.getItem('pos_session_backup');
           if (sessionBackupStr) {
             try {
               const cachedSession = JSON.parse(sessionBackupStr);
-              if (isSessionExpired(cachedSession)) {
-                console.warn('[Auth] getSession error and cached session expired — signing out cleanly');
-                dropSessionBackups();
-                localStorage.removeItem('pos_session_active');
-                applySession(null);
-                return;
-              }
               applySession(cachedSession);
               return;
             } catch (e) {
               console.error('[Auth] Failed to parse backup session during error', e);
             }
           }
+          // No backup but session was active — keep current state, don't sign out
+          setIsLoading(false);
+          return;
         }
       }
       applySession(session);
     });
+
 
     return () => {
       isMounted = false;
