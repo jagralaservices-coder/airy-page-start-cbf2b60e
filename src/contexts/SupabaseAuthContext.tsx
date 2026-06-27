@@ -405,40 +405,34 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
           user_metadata: { full_name: 'Mock Owner' }
         } as any;
       } else if (!finalSession) {
-        // If there's a cached session backup, restore it to prevent automatic logout when offline or refreshing
+        // If there's a cached session backup, restore it to prevent automatic logout when offline or refreshing.
+        // We intentionally restore even if the *access_token* has expired — Supabase's autoRefreshToken
+        // will rotate using the long-lived refresh_token (valid for days/weeks), so the user stays logged in
+        // across page refreshes, browser restarts, and multi-day gaps until they explicitly log out.
         const sessionBackupStr = localStorage.getItem('pos_session_backup');
         const userBackupStr = localStorage.getItem('pos_user_backup');
         if (sessionBackupStr && userBackupStr && (sessionActive || localStorage.getItem('pos_login_as_demo') === 'true')) {
           try {
             const cached: Session = JSON.parse(sessionBackupStr);
-            if (isSessionExpired(cached)) {
-              // Expired cached token — discard, do not restore (prevents silent 401 loops)
-              console.warn('[Auth] Cached session expired — clearing backup, requiring re-auth');
-              dropSessionBackups();
-              localStorage.removeItem('pos_session_active');
-            } else {
-              console.log('[Auth] Restoring session from backup cache (preserves login)');
-              finalSession = cached;
-              finalUser = JSON.parse(userBackupStr);
-            }
+            console.log('[Auth] Restoring session from backup cache (preserves login across refresh/restart)');
+            finalSession = cached;
+            finalUser = JSON.parse(userBackupStr);
           } catch (e) {
             console.error('[Auth] Failed to parse session backup', e);
             dropSessionBackups();
           }
         }
       } else {
-        // Cache backup copies of session/user when loaded successfully (only if not expired)
-        if (!isSessionExpired(finalSession)) {
-          try {
-            localStorage.setItem('pos_session_backup', JSON.stringify(finalSession));
-            localStorage.setItem('pos_user_backup', JSON.stringify(finalUser));
-          } catch (e) {
-            console.error('[Auth] Failed to cache session backup', e);
-          }
-        } else {
-          dropSessionBackups();
+        // Cache backup copies of session/user whenever Supabase gives us a fresh one
+        try {
+          localStorage.setItem('pos_session_backup', JSON.stringify(finalSession));
+          localStorage.setItem('pos_user_backup', JSON.stringify(finalUser));
+          localStorage.setItem('pos_session_active', 'true');
+        } catch (e) {
+          console.error('[Auth] Failed to cache session backup', e);
         }
       }
+
 
       setSession(finalSession);
       setUser(finalUser);
