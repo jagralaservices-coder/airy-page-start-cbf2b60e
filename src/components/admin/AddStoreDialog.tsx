@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { getTierLimits, type SubscriptionTier, type BusinessType } from '@/lib/subscriptionConfig';
 
 interface Props {
   children: React.ReactNode;
@@ -17,10 +18,11 @@ type MerchantOption = {
   id: string;
   business_name: string;
   owner_email: string;
-  plan?: string | null;
-  outlet_limit?: number | null;
-  extra_outlets?: number | null;
-  active_stores?: number;
+  plan: SubscriptionTier;
+  business_type: BusinessType;
+  outlet_limit: number;
+  extra_outlets: number;
+  active_stores: number;
 };
 
 export default function AddStoreDialog({ children, onCreated }: Props) {
@@ -55,40 +57,42 @@ export default function AddStoreDialog({ children, onCreated }: Props) {
   useEffect(() => {
     if (!isOpen) return;
     (async () => {
+      // Merchants live in the legacy `customers` table; subscription_plan/business_type drive outlet limits.
       const { data: ms } = await supabase
-        .from('merchants')
-        .select('id, business_name, owner_email')
+        .from('customers')
+        .select('id, business_name, owner_email, subscription_plan, business_type, max_stores, enabled_addons')
         .eq('is_active', true)
+        .eq('approval_status', 'approved')
         .order('business_name');
-      const list = (ms || []) as MerchantOption[];
+      const list = (ms || []) as any[];
       if (list.length === 0) { setMerchants([]); return; }
 
       const ids = list.map(m => m.id);
-      const [{ data: subs }, { data: storeRows }] = await Promise.all([
-        supabase
-          .from('merchant_subscription')
-          .select('merchant_id, plan_name, outlet_limit, extra_outlets, expiry_date, status')
-          .in('merchant_id', ids),
-        supabase
-          .from('stores')
-          .select('id, merchant_id')
-          .in('merchant_id', ids)
-          .eq('is_active', true),
-      ]);
+      const { data: storeRows } = await supabase
+        .from('stores')
+        .select('id, customer_id, merchant_id')
+        .or(`customer_id.in.(${ids.join(',')}),merchant_id.in.(${ids.join(',')})`)
+        .eq('is_active', true);
 
-      const subMap = new Map<string, any>();
-      (subs || []).forEach((s: any) => subMap.set(s.merchant_id, s));
       const countMap = new Map<string, number>();
-      (storeRows || []).forEach((r: any) => countMap.set(r.merchant_id, (countMap.get(r.merchant_id) || 0) + 1));
+      (storeRows || []).forEach((r: any) => {
+        const key = r.customer_id || r.merchant_id;
+        if (key) countMap.set(key, (countMap.get(key) || 0) + 1);
+      });
 
-      setMerchants(list.map(m => {
-        const sub = subMap.get(m.id);
-        const active = sub && sub.status === 'active' && new Date(sub.expiry_date) >= new Date();
+      setMerchants(list.map((m): MerchantOption => {
+        const plan = (m.subscription_plan || 'basic') as SubscriptionTier;
+        const bizType = (m.business_type === 'retail' ? 'retail' : 'restaurant') as BusinessType;
+        const tierLimits = getTierLimits(plan, bizType);
+        const baseOutlets = Math.max(tierLimits?.maxOutlets || 1, m.max_stores || 0);
         return {
-          ...m,
-          plan: active ? sub.plan_name : 'basic',
-          outlet_limit: active ? (sub.outlet_limit || 1) : 1,
-          extra_outlets: active ? (sub.extra_outlets || 0) : 0,
+          id: m.id,
+          business_name: m.business_name || m.owner_email || 'Unnamed',
+          owner_email: m.owner_email || '',
+          plan,
+          business_type: bizType,
+          outlet_limit: baseOutlets,
+          extra_outlets: 0,
           active_stores: countMap.get(m.id) || 0,
         };
       }));
