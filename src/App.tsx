@@ -417,7 +417,7 @@ const AppRoutes = () => {
         <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><MenuPage /></ProtectedRoute>
       } />
       <Route path="/stores" element={
-        <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner']}><StoresPage /></ProtectedRoute>
+        <ProtectedRoute allowedRoles={['super_admin', 'admin']}><StoresPage /></ProtectedRoute>
       } />
       <Route path="/expenses" element={
         <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><FeatureGuard featureKey="expenseTracking"><ExpensesPage /></FeatureGuard></ProtectedRoute>

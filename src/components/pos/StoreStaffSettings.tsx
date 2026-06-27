@@ -737,13 +737,15 @@ export const StoreStaffSettings: React.FC = () => {
               <Building className="w-5 h-5 text-primary" />
               <h2 className="font-semibold">Stores</h2>
             </div>
-            <Button 
-              onClick={() => setShowAddStore(true)}
-              disabled={stores.length >= (customer?.max_stores || 2)}
-              size="sm"
-            >
-              <Plus className="w-4 h-4 mr-1" /> Add Store
-            </Button>
+            {isAdmin() && (
+              <Button 
+                onClick={() => setShowAddStore(true)}
+                disabled={stores.length >= (customer?.max_stores || 2)}
+                size="sm"
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add Store
+              </Button>
+            )}
           </div>
           
           {stores.length === 0 ? (

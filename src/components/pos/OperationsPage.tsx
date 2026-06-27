@@ -172,7 +172,7 @@ export const OperationsPage: React.FC = () => {
     { id: 'hold', icon: PauseCircle, label: t('operations.hold'), path: '/pos' },
     { id: 'alerts', icon: Bell, label: t('operations.alerts'), action: () => setShowStockAlerts(true) },
     // Show Stores only for owner login (not store login)
-    ...(isOwner && !isStoreLogin ? [{ id: 'stores', icon: Store, label: t('operations.stores'), path: '/stores' }] : []),
+    ...(isAdmin && !isStoreLogin ? [{ id: 'stores', icon: Store, label: t('operations.stores'), path: '/stores' }] : []),
     // Main Operations
     { id: 'online-orders', icon: Globe, label: t('operations.onlineOrders'), path: '/online-orders', featureKey: 'swiggyZomato' as keyof typeof FEATURES },
     

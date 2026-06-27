@@ -106,7 +106,7 @@ const navItems: NavItem[] = [
   { path: '/online-orders', icon: Globe, labelKey: 'Online Orders', featureKey: 'swiggyZomato' },
   { path: '/qr-orders', icon: QrCode, labelKey: 'Menu Orders', featureKey: 'qrMenuOrdering' },
   { path: '/staff', icon: Users, labelKey: 'nav.staff', requiredRoles: ['admin', 'owner', 'store_manager'], featureKey: 'staffManagement' },
-  { path: '/stores', icon: Store, labelKey: 'nav.stores', requiredRoles: ['admin', 'owner'], featureKey: 'multiOutlet' },
+  { path: '/stores', icon: Store, labelKey: 'nav.stores', requiredRoles: ['admin'], featureKey: 'multiOutlet' },
   { path: '/chat', icon: MessageSquare, labelKey: 'common.teamChat', featureKey: 'teamChat' },
   { path: '/credit-ledger', icon: ScrollText, labelKey: 'Credit Ledger', featureKey: 'creditLedger' },
   { path: '/executive-dashboard', icon: Gauge, labelKey: 'Executive Dashboard', requiredRoles: ['admin', 'owner'], featureKey: 'executiveDashboard' },
