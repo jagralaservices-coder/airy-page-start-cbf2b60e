@@ -57,15 +57,36 @@ export default function AddStoreDialog({ children, onCreated }: Props) {
   useEffect(() => {
     if (!isOpen) return;
     (async () => {
-      // Merchants live in the legacy `customers` table; subscription_plan/business_type drive outlet limits.
-      const { data: ms } = await supabase
-        .from('customers')
-        .select('id, business_name, owner_email, subscription_plan, business_type, max_stores, enabled_addons')
+      // Primary source: `merchants` table (managed from Merchant Management).
+      // Fallback to legacy `customers` rows only for IDs that still exist in `merchants`.
+      const { data: mRows } = await supabase
+        .from('merchants')
+        .select('id, business_name, owner_email, subscription_plan, business_type, is_active, approval_status')
         .eq('is_active', true)
         .eq('approval_status', 'approved')
         .order('business_name');
-      const list = (ms || []) as any[];
-      if (list.length === 0) { setMerchants([]); return; }
+      const merchantRows = (mRows || []) as any[];
+      if (merchantRows.length === 0) { setMerchants([]); return; }
+
+      // Enrich with legacy customers fields (max_stores, enabled_addons) where IDs match.
+      const mIds = merchantRows.map(m => m.id);
+      const { data: cRows } = await supabase
+        .from('customers')
+        .select('id, business_name, owner_email, subscription_plan, business_type, max_stores, enabled_addons')
+        .in('id', mIds);
+      const cMap = new Map<string, any>((cRows || []).map((c: any) => [c.id, c]));
+      const list = merchantRows.map(m => {
+        const c = cMap.get(m.id) || {};
+        return {
+          id: m.id,
+          business_name: m.business_name || c.business_name || m.owner_email,
+          owner_email: m.owner_email || c.owner_email,
+          subscription_plan: m.subscription_plan || c.subscription_plan || 'basic',
+          business_type: m.business_type || c.business_type || 'restaurant',
+          max_stores: c.max_stores || 0,
+          enabled_addons: c.enabled_addons || [],
+        };
+      });
 
       const ids = list.map(m => m.id);
       const { data: storeRows } = await supabase
