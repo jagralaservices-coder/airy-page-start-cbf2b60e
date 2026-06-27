@@ -1923,19 +1923,20 @@ export const POSBillingPage: React.FC = () => {
                 const isHighlighted = activeSection === 'actions' && actionHighlightIndex === idx;
                 return (
                   <Button
-                    variant={isActionBtn && selectedPayment ? "default" : "outline"}
+                    variant="default"
                     size="default"
                     onClick={buttonActions[btn.id] || (() => {})}
                     disabled={cart.length === 0 || isProcessingSale}
                     className={cn(
-                      "h-11 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl border border-border",
-                      isHighlighted && "ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]"
+                      "h-11 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl bg-primary text-primary-foreground border border-primary hover:bg-primary/90",
+                      isHighlighted && "ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background scale-[1.02]"
                     )}
                   >
                     {iconMap[btn.id]}
                     {btn.label}
                   </Button>
                 );
+
               }}
             />
           </div>
