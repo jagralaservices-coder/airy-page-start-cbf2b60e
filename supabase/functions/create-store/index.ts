@@ -107,11 +107,16 @@ serve(async (req) => {
     const planName = String((merchantSource as any).subscription_plan || 'basic').toLowerCase()
     const merchantBizType = String((merchantSource as any).business_type || business_type || 'restaurant').toLowerCase()
 
-    // Plan-based outlet limit (mirrors src/lib/subscriptionConfig.ts)
+    // Plan-based outlet limit (mirrors src/lib/subscriptionConfig.ts) + addon-based extras.
     const TIER_OUTLETS: Record<string, number> = { basic: 1, gold: 1, platinum: 2, custom: 1 }
-    // Retail tier limits match restaurant for outlets in the current config, so a single map is fine.
     const planMaxOutlets = TIER_OUTLETS[planName] ?? 1
-    const allowedOutlets = Math.max(planMaxOutlets, (merchantSource as any).max_stores || 0)
+    const { data: subRow } = await supabaseAdmin
+      .from('merchant_subscription')
+      .select('extra_outlets')
+      .eq('merchant_id', merchant_id)
+      .maybeSingle()
+    const extraOutlets = Number((subRow as any)?.extra_outlets || 0)
+    const allowedOutlets = planMaxOutlets + extraOutlets
 
     // Count existing active stores for this merchant under either FK
     const orFilter = useCustomerFk
