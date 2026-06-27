@@ -77,10 +77,24 @@ export const OfflineIndicator: React.FC = () => {
   }
 
   if (pending > 0) {
+    const clearPending = () => {
+      if (!window.confirm(`Discard ${pending} stuck changes? This will clear the sync queue.`)) return;
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith('pos_failed_sync_queue_') || key.startsWith('pos_deleted_'))) {
+          localStorage.removeItem(key);
+        }
+      }
+      setPending(0);
+      window.dispatchEvent(new Event('storage'));
+    };
+
     return (
-      <div className="fixed top-0 left-0 right-0 z-[100] bg-primary text-primary-foreground text-center py-1.5 text-xs font-medium flex items-center justify-center gap-2 shadow-md">
-        <CloudUpload className="w-3.5 h-3.5 animate-pulse" />
-        Syncing {pending} change{pending === 1 ? '' : 's'} to cloud…
+      <div className="fixed top-0 left-0 right-0 z-[100] bg-primary text-primary-foreground text-center py-1.5 px-4 text-xs font-medium flex items-center justify-between shadow-md">
+        <div className="flex items-center gap-2 mx-auto cursor-pointer" onClick={clearPending} title="Click to clear stuck changes">
+          <CloudUpload className="w-3.5 h-3.5 animate-pulse" />
+          Syncing {pending} change{pending === 1 ? '' : 's'} to cloud…
+        </div>
       </div>
     );
   }
