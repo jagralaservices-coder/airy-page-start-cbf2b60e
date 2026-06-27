@@ -20,7 +20,7 @@
     --popover-foreground: 211 100% 12%;
 
     /* Primary - Poster navy */
-    --primary: 211 100% 18%;
+    --primary: 211 100% 14%;
     --primary-foreground: 210 33% 98%;
 
     --secondary: 214 18% 83%;
@@ -45,7 +45,7 @@
 
     --border: 214 18% 82%;
     --input: 214 18% 82%;
-    --ring: 211 100% 18%;
+    --ring: 211 100% 14%;
 
     --radius: 0.5rem;
 
