@@ -1457,9 +1457,9 @@ export const POSBillingPage: React.FC = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="icon"
-                      className="h-12 w-12 flex-shrink-0"
+                      className="h-12 w-12 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={() => setShowCustomerDetails(!showCustomerDetails)}
                     >
                       <User className="w-[22px] h-[22px]" />
@@ -1472,14 +1472,14 @@ export const POSBillingPage: React.FC = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="icon"
-                      className="h-12 w-12 flex-shrink-0 relative"
+                      className="h-12 w-12 flex-shrink-0 relative bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={() => setShowHeldBills(!showHeldBills)}
                     >
                       <Play className="w-[22px] h-[22px]" />
                       {heldBills.length > 0 && (
-                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] rounded-full flex items-center justify-center">
+                        <span className="absolute -top-1 -right-1 w-4 h-4 bg-white text-primary text-[10px] rounded-full flex items-center justify-center font-bold">
                           {heldBills.length}
                         </span>
                       )}
@@ -1493,9 +1493,9 @@ export const POSBillingPage: React.FC = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="icon"
-                        className="h-12 w-12 flex-shrink-0"
+                        className="h-12 w-12 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                         onClick={() => setShowQROrders(true)}
                       >
                         <QrCode className="w-[22px] h-[22px]" />
@@ -1508,9 +1508,9 @@ export const POSBillingPage: React.FC = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant={editMode.isEditMode ? "default" : "ghost"}
+                      variant="default"
                       size="icon"
-                      className={cn("h-12 w-12 flex-shrink-0", editMode.isEditMode && "animate-pulse")}
+                      className={cn("h-12 w-12 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90", editMode.isEditMode && "animate-pulse")}
                       onClick={() => {
                         if (editMode.isEditMode) {
                           editMode.exitEditMode();
@@ -1527,12 +1527,12 @@ export const POSBillingPage: React.FC = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="ghost"
+                      variant="default"
                       size="icon"
-                      className="h-12 w-12 flex-shrink-0"
+                      className="h-12 w-12 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={() => navigate('/ui-customization')}
                     >
-                      <Settings className="w-[22px] h-[22px] text-muted-foreground" />
+                      <Settings className="w-[22px] h-[22px]" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom"><p>All Settings</p></TooltipContent>
