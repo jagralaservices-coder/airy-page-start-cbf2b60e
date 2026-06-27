@@ -223,16 +223,16 @@ export const AppHeader: React.FC = () => {
     }
     
     try {
-      // Verify password by re-authenticating
-      const { error } = await supabase.auth.signInWithPassword({
-        email: user?.email || '',
-        password: storeChangePassword,
+      // Verify password via dedicated endpoint — does NOT touch our session.
+      const { data, error } = await supabase.functions.invoke('verify-user-password', {
+        body: { password: storeChangePassword },
       });
 
-      if (error) {
+      if (error || !data?.valid) {
         setPasswordError('Incorrect password');
         return;
       }
+
 
       setShowPasswordDialog(false);
       setStoreChangePassword('');
