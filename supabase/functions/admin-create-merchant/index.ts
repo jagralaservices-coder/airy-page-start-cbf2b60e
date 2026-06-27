@@ -88,8 +88,8 @@ serve(async (req) => {
       owner_email: normalizedEmail,
       phone,
       business_type: businessType || "retail",
-      subscription_plan: plan || "basic",
-      subscription_tier: plan || "basic",
+      subscription_plan: plan,
+      subscription_tier: plan,
       approval_status: "approved",
       is_active: true,
     }).select("id").single();
@@ -107,8 +107,8 @@ serve(async (req) => {
       owner_name: fullName,
       owner_email: normalizedEmail,
       business_type: businessType || "retail",
-      subscription_plan: plan || "basic",
-      subscription_tier: plan || "basic",
+      subscription_plan: plan,
+      subscription_tier: plan,
       enabled_addons: addons,
       is_active: true,
       approval_status: "approved"
@@ -154,7 +154,7 @@ serve(async (req) => {
 
     const { error: subErr } = await admin.from("merchant_subscription").insert({
       merchant_id: merchant.id,
-      plan_name: plan || 'basic',
+      plan_name: plan,
       status: 'active',
       staff_limit: staffLimit,
       outlet_limit: outletLimit,
