@@ -69,7 +69,7 @@ export const QRMenuGenerator: React.FC<QRMenuGeneratorProps> = ({ className, ico
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className={cn("h-8 w-8 flex-shrink-0", className)}>
+        <Button variant="default" size="icon" className={cn("h-8 w-8 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90", className)}>
           <QrCode className={cn("w-3.5 h-3.5", iconClassName)} />
         </Button>
       </DialogTrigger>
