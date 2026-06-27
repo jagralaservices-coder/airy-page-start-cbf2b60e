@@ -103,6 +103,14 @@ export default function AddStoreDialog({ children, onCreated }: Props) {
   const allowedOutlets = selectedMerchant ? ((selectedMerchant.outlet_limit || 1) + (selectedMerchant.extra_outlets || 0)) : 0;
   const atLimit = selectedMerchant ? (selectedMerchant.active_stores || 0) >= allowedOutlets : false;
 
+  // Auto-sync business_type from the selected merchant so the store inherits its plan/biz type.
+  useEffect(() => {
+    if (selectedMerchant && formData.business_type !== selectedMerchant.business_type) {
+      setFormData((f) => ({ ...f, business_type: selectedMerchant.business_type }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedMerchant?.id]);
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.merchant_id || !formData.store_name || !formData.email || !formData.password) {
