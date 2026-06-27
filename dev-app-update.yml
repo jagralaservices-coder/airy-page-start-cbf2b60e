@@ -1,0 +1,4 @@
+provider: github
+owner: jagralaservices-coder
+repo: pos-software-fine
+updaterCacheDirName: paystorepos-updater
