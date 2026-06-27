@@ -88,11 +88,17 @@ export default function AddStoreDialog({ children, onCreated }: Props) {
         };
       });
 
-      const ids = list.map(m => m.id);
+      // Fetch extra outlets (addon-based) from merchant_subscription
+      const { data: subRows } = await supabase
+        .from('merchant_subscription')
+        .select('merchant_id, extra_outlets')
+        .in('merchant_id', mIds);
+      const extraMap = new Map<string, number>((subRows || []).map((s: any) => [s.merchant_id, s.extra_outlets || 0]));
+
       const { data: storeRows } = await supabase
         .from('stores')
         .select('id, customer_id, merchant_id')
-        .or(`customer_id.in.(${ids.join(',')}),merchant_id.in.(${ids.join(',')})`)
+        .or(`customer_id.in.(${mIds.join(',')}),merchant_id.in.(${mIds.join(',')})`)
         .eq('is_active', true);
 
       const countMap = new Map<string, number>();
@@ -105,7 +111,8 @@ export default function AddStoreDialog({ children, onCreated }: Props) {
         const plan = (m.subscription_plan || 'basic') as SubscriptionTier;
         const bizType = (m.business_type === 'retail' ? 'retail' : 'restaurant') as BusinessType;
         const tierLimits = getTierLimits(plan, bizType);
-        const baseOutlets = Math.max(tierLimits?.maxOutlets || 1, m.max_stores || 0);
+        // Plan is the source of truth — ignore legacy customers.max_stores.
+        const baseOutlets = tierLimits?.maxOutlets || 1;
         return {
           id: m.id,
           business_name: m.business_name || m.owner_email || 'Unnamed',
@@ -113,7 +120,7 @@ export default function AddStoreDialog({ children, onCreated }: Props) {
           plan,
           business_type: bizType,
           outlet_limit: baseOutlets,
-          extra_outlets: 0,
+          extra_outlets: extraMap.get(m.id) || 0,
           active_stores: countMap.get(m.id) || 0,
         };
       }));
