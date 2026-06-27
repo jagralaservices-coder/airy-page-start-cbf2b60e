@@ -135,6 +135,39 @@ serve(async (req) => {
       return json({ error: rErr.message }, 200);
     }
 
+    // Set up merchant_subscription
+    let staffLimit = 2;
+    let outletLimit = 1;
+    if (plan === 'gold') {
+      staffLimit = 10;
+      outletLimit = 3;
+    } else if (plan === 'platinum') {
+      staffLimit = 999;
+      outletLimit = 999;
+    } else if (plan === 'custom') {
+      staffLimit = 10;
+      outletLimit = 3; // Give decent limits for custom plan
+    }
+
+    const expiryDate = new Date();
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1); // 1 year expiry
+
+    const { error: subErr } = await admin.from("merchant_subscription").insert({
+      merchant_id: merchant.id,
+      plan_name: plan || 'basic',
+      status: 'active',
+      staff_limit: staffLimit,
+      outlet_limit: outletLimit,
+      extra_staff: 0,
+      extra_outlets: 0,
+      start_date: new Date().toISOString(),
+      expiry_date: expiryDate.toISOString()
+    });
+
+    if (subErr) {
+       console.error("merchant_subscription error", subErr);
+    }
+
     // Log revenue for the new merchant
     const PLAN_PRICING: Record<string, number> = {
       basic: 7999,

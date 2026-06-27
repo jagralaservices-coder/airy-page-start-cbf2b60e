@@ -248,6 +248,36 @@ serve(async (req) => {
       created_by: user.id
     })
 
+    // Set up merchant_subscription
+    let staffLimit = 2;
+    let outletLimit = 1;
+    if (customerData.subscription_plan === 'gold') {
+      staffLimit = 10;
+      outletLimit = 3;
+    } else if (customerData.subscription_plan === 'platinum') {
+      staffLimit = 999;
+      outletLimit = 999;
+    } else if (customerData.subscription_plan === 'custom') {
+      staffLimit = 10;
+      outletLimit = 3; 
+    }
+
+    const { error: subErr } = await supabaseAdmin.from("merchant_subscription").insert({
+      merchant_id: customer_id,
+      plan_name: customerData.subscription_plan || 'basic',
+      status: 'active',
+      staff_limit: staffLimit,
+      outlet_limit: outletLimit,
+      extra_staff: 0,
+      extra_outlets: 0,
+      start_date: new Date().toISOString(),
+      expiry_date: subscriptionEnd.toISOString()
+    });
+
+    if (subErr) {
+       console.log("merchant_subscription error", subErr);
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
