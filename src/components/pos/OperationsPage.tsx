@@ -127,6 +127,7 @@ export const OperationsPage: React.FC = () => {
   // Check if store login mode
   const isStoreLogin = localStorage.getItem('pos_is_store_login') === 'true';
   const isOwner = userRole?.role === 'owner' || userRole?.role === 'admin' || userRole?.role === 'super_admin';
+  const isAdmin = userRole?.role === 'admin' || userRole?.role === 'super_admin';
   const { canAccess, requiresUpgrade } = useSubscription();
   const { getOperationsOrder, reorderOperations } = useUICustomization();
 
