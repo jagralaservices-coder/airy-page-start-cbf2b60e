@@ -1493,9 +1493,9 @@ export const POSBillingPage: React.FC = () => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="icon"
-                        className="h-12 w-12 flex-shrink-0"
+                        className="h-12 w-12 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                         onClick={() => setShowQROrders(true)}
                       >
                         <QrCode className="w-[22px] h-[22px]" />
