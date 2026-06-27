@@ -81,7 +81,7 @@ function isFeatureIncluded(featureKey: string, tier: SubscriptionTier, businessT
   const feature = FEATURES[featureKey];
   if (!feature) return false;
   const requiredTier = businessType === 'restaurant' ? feature.restaurant : feature.retail;
-  const tierLevel: Record<SubscriptionTier, number> = { basic: 1, gold: 2, platinum: 3 };
+  const tierLevel: Record<SubscriptionTier, number> = { basic: 1, gold: 2, platinum: 3, custom: 4 };
   return tierLevel[tier] >= tierLevel[requiredTier];
 }
 
