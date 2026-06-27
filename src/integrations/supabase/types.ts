@@ -14,57 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      revenue_audit: {
-        Row: {
-          id: string
-          merchant_id: string | null
-          merchant_name: string
-          plan_purchased: string | null
-          addons_purchased: any | null
-          outlet_purchased: number | null
-          amount_added: number
-          created_by: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          merchant_id?: string | null
-          merchant_name: string
-          plan_purchased?: string | null
-          addons_purchased?: any | null
-          outlet_purchased?: number | null
-          amount_added: number
-          created_by?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          merchant_id?: string | null
-          merchant_name?: string
-          plan_purchased?: string | null
-          addons_purchased?: any | null
-          outlet_purchased?: number | null
-          amount_added?: number
-          created_by?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "revenue_audit_merchant_id_fkey"
-            columns: ["merchant_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "revenue_audit_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       attendance: {
         Row: {
           clock_in: string
