@@ -1820,11 +1820,9 @@ export const POSBillingPage: React.FC = () => {
                 onClick={() => handlePaymentSelect('cash')}
                 disabled={cart.length === 0}
                 className={cn(
-                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold border-border',
-                  selectedPayment === 'cash' 
-                    ? 'border-primary bg-primary/10 text-primary' 
-                    : 'hover:border-primary/50',
-                  activeSection === 'payments' && paymentHighlightIndex === 0 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                  selectedPayment === 'cash' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                  activeSection === 'payments' && paymentHighlightIndex === 0 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                   cart.length === 0 && 'opacity-50 cursor-not-allowed'
                 )}
               >
@@ -1835,11 +1833,9 @@ export const POSBillingPage: React.FC = () => {
                 onClick={() => handlePaymentSelect('card')}
                 disabled={cart.length === 0}
                 className={cn(
-                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold border-border',
-                  selectedPayment === 'card' 
-                    ? 'border-primary bg-primary/10 text-primary' 
-                    : 'hover:border-primary/50',
-                  activeSection === 'payments' && paymentHighlightIndex === 1 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                  selectedPayment === 'card' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                  activeSection === 'payments' && paymentHighlightIndex === 1 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                   cart.length === 0 && 'opacity-50 cursor-not-allowed'
                 )}
               >
@@ -1850,11 +1846,9 @@ export const POSBillingPage: React.FC = () => {
                 onClick={() => handlePaymentSelect('upi')}
                 disabled={cart.length === 0}
                 className={cn(
-                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold border-border',
-                  selectedPayment === 'upi' 
-                    ? 'border-primary bg-primary/10 text-primary' 
-                    : 'hover:border-primary/50',
-                  activeSection === 'payments' && paymentHighlightIndex === 2 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                  selectedPayment === 'upi' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                  activeSection === 'payments' && paymentHighlightIndex === 2 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                   cart.length === 0 && 'opacity-50 cursor-not-allowed'
                 )}
               >
@@ -1864,16 +1858,15 @@ export const POSBillingPage: React.FC = () => {
               <button
                 onClick={() => setShowMorePayments(true)}
                 className={cn(
-                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold border-border',
-                  ['due', 'part', 'wallet', 'credit', 'access'].includes(selectedPayment || '')
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'hover:border-primary/50',
-                  activeSection === 'payments' && paymentHighlightIndex === 3 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]'
+                  'h-11 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs md:text-sm font-semibold bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                  ['due', 'part', 'wallet', 'credit', 'access'].includes(selectedPayment || '') && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                  activeSection === 'payments' && paymentHighlightIndex === 3 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]'
                 )}
               >
                   <MoreHorizontal className="w-4 h-4" />
                   <span>{t('common.more')}</span>
               </button>
+
             </div>
           </div>
 
@@ -1930,19 +1923,20 @@ export const POSBillingPage: React.FC = () => {
                 const isHighlighted = activeSection === 'actions' && actionHighlightIndex === idx;
                 return (
                   <Button
-                    variant={isActionBtn && selectedPayment ? "default" : "outline"}
+                    variant="default"
                     size="default"
                     onClick={buttonActions[btn.id] || (() => {})}
                     disabled={cart.length === 0 || isProcessingSale}
                     className={cn(
-                      "h-11 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl border border-border",
-                      isHighlighted && "ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]"
+                      "h-11 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl bg-primary text-primary-foreground border border-primary hover:bg-primary/90",
+                      isHighlighted && "ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background scale-[1.02]"
                     )}
                   >
                     {iconMap[btn.id]}
                     {btn.label}
                   </Button>
                 );
+
               }}
             />
           </div>
@@ -2001,11 +1995,9 @@ export const POSBillingPage: React.FC = () => {
               }}
               disabled={cart.length === 0}
               className={cn(
-                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all',
-                selectedPayment === 'cash' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:border-primary/50',
-                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 0 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                selectedPayment === 'cash' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 0 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                 cart.length === 0 && 'opacity-50 cursor-not-allowed'
               )}
             >
@@ -2021,11 +2013,9 @@ export const POSBillingPage: React.FC = () => {
               }}
               disabled={cart.length === 0}
               className={cn(
-                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all',
-                selectedPayment === 'upi' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:border-primary/50',
-                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 1 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                selectedPayment === 'upi' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 1 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                 cart.length === 0 && 'opacity-50 cursor-not-allowed'
               )}
             >
@@ -2041,11 +2031,9 @@ export const POSBillingPage: React.FC = () => {
               }}
               disabled={cart.length === 0}
               className={cn(
-                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all',
-                selectedPayment === 'card' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:border-primary/50',
-                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 2 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                selectedPayment === 'card' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 2 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                 cart.length === 0 && 'opacity-50 cursor-not-allowed'
               )}
             >
@@ -2063,11 +2051,9 @@ export const POSBillingPage: React.FC = () => {
               }}
               disabled={cart.length === 0}
               className={cn(
-                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all',
-                selectedPayment === 'part' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:border-primary/50',
-                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 4 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                selectedPayment === 'part' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 4 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                 cart.length === 0 && 'opacity-50 cursor-not-allowed'
               )}
             >
@@ -2083,15 +2069,13 @@ export const POSBillingPage: React.FC = () => {
               }}
               disabled={cart.length === 0}
               className={cn(
-                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all',
-                selectedPayment === 'wallet' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:border-primary/50',
-                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 5 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                selectedPayment === 'wallet' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 5 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                 cart.length === 0 && 'opacity-50 cursor-not-allowed'
               )}
             >
-              <Wallet className="w-5 h-5 text-blue-500" />
+              <Wallet className="w-5 h-5" />
               <span className="text-sm font-medium">{t('common.wallet')}</span>
             </button>
             
@@ -2103,15 +2087,13 @@ export const POSBillingPage: React.FC = () => {
               }}
               disabled={cart.length === 0}
               className={cn(
-                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all',
-                selectedPayment === 'credit' 
-                  ? 'border-primary bg-primary/10 text-primary' 
-                  : 'border-border hover:border-primary/50',
-                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 6 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]',
+                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                selectedPayment === 'credit' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 6 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
                 cart.length === 0 && 'opacity-50 cursor-not-allowed'
               )}
             >
-              <Receipt className="w-5 h-5 text-amber-500" />
+              <Receipt className="w-5 h-5" />
               <span className="text-sm font-medium">{t('common.credit')}</span>
             </button>
 
@@ -2122,16 +2104,15 @@ export const POSBillingPage: React.FC = () => {
                 setShowAccessPaymentDialog(true);
               }}
               className={cn(
-                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all',
-                selectedPayment === 'access'
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-border hover:border-primary/50',
-                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 7 && 'ring-2 ring-primary ring-offset-1 border-primary scale-[1.02]'
+                'h-16 rounded-lg flex flex-col items-center justify-center gap-1 border-2 transition-all bg-primary text-primary-foreground border-primary hover:bg-primary/90',
+                selectedPayment === 'access' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
+                activeSection === 'payments' && showMorePayments && sheetPaymentHighlightIndex === 7 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]'
               )}
             >
-              <Landmark className="w-5 h-5 text-emerald-600" />
+              <Landmark className="w-5 h-5" />
               <span className="text-sm font-medium">Access Pay</span>
             </button>
+
           </div>
         </SheetContent>
       </Sheet>
