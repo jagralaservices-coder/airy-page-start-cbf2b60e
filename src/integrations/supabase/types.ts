@@ -159,6 +159,7 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          merchant_id: string | null
           name: string
           sort_order: number
           updated_at: string
@@ -168,6 +169,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          merchant_id?: string | null
           name: string
           sort_order?: number
           updated_at?: string
@@ -177,6 +179,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          merchant_id?: string | null
           name?: string
           sort_order?: number
           updated_at?: string
@@ -1466,6 +1469,7 @@ export type Database = {
           created_by: string | null
           expected_date: string | null
           id: string
+          merchant_id: string | null
           notes: string | null
           po_number: string
           received_date: string | null
@@ -1481,6 +1485,7 @@ export type Database = {
           created_by?: string | null
           expected_date?: string | null
           id?: string
+          merchant_id?: string | null
           notes?: string | null
           po_number?: string
           received_date?: string | null
@@ -1496,6 +1501,7 @@ export type Database = {
           created_by?: string | null
           expected_date?: string | null
           id?: string
+          merchant_id?: string | null
           notes?: string | null
           po_number?: string
           received_date?: string | null
@@ -1919,6 +1925,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          merchant_id: string | null
           name: string
           notes: string | null
           phone: string | null
@@ -1931,6 +1938,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          merchant_id?: string | null
           name: string
           notes?: string | null
           phone?: string | null
@@ -1943,6 +1951,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          merchant_id?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
@@ -2026,6 +2035,7 @@ export type Database = {
       get_merchant_features: { Args: { _user_id: string }; Returns: string[] }
       get_merchant_plan: { Args: { _user_id: string }; Returns: string }
       get_user_customer_id: { Args: { _user_id: string }; Returns: string }
+      get_user_merchant_id: { Args: { _user_id: string }; Returns: string }
       has_any_active_role: { Args: { _user_id: string }; Returns: boolean }
       has_any_role: {
         Args: {
@@ -2039,6 +2049,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      user_in_merchant: {
+        Args: { _merchant_id: string; _user_id: string }
         Returns: boolean
       }
     }
