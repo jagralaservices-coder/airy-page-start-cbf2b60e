@@ -1508,9 +1508,9 @@ export const POSBillingPage: React.FC = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant={editMode.isEditMode ? "default" : "ghost"}
+                      variant="default"
                       size="icon"
-                      className={cn("h-12 w-12 flex-shrink-0", editMode.isEditMode && "animate-pulse")}
+                      className={cn("h-12 w-12 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90", editMode.isEditMode && "animate-pulse")}
                       onClick={() => {
                         if (editMode.isEditMode) {
                           editMode.exitEditMode();
