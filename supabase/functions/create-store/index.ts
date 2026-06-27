@@ -81,46 +81,61 @@ serve(async (req) => {
 
     const normalizedEmail = String(email).trim().toLowerCase()
 
-    // Verify merchant exists & check store limit
-    const { data: merchant } = await supabaseAdmin
-      .from('merchants')
-      .select('id, max_stores')
-      .eq('id', merchant_id)
-      .maybeSingle()
-    if (!merchant) {
+    // Resolve merchant from BOTH tables (legacy data lives in `customers`, new in `merchants`).
+    // Whichever table holds the row, we use its plan + business_type to enforce outlet limits
+    // and inherit them onto the new store via the matching FK (customer_id or merchant_id).
+    const [{ data: merchantRow }, { data: customerRow }] = await Promise.all([
+      supabaseAdmin
+        .from('merchants')
+        .select('id, max_stores, subscription_plan, business_type')
+        .eq('id', merchant_id)
+        .maybeSingle(),
+      supabaseAdmin
+        .from('customers')
+        .select('id, max_stores, subscription_plan, business_type, enabled_addons')
+        .eq('id', merchant_id)
+        .maybeSingle(),
+    ])
+
+    const merchantSource = merchantRow || customerRow
+    if (!merchantSource) {
       return new Response(JSON.stringify({ error: 'Invalid merchant account' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
+    const useCustomerFk = !merchantRow && !!customerRow
+    const planName = String((merchantSource as any).subscription_plan || 'basic').toLowerCase()
+    const merchantBizType = String((merchantSource as any).business_type || business_type || 'restaurant').toLowerCase()
+
+    // Plan-based outlet limit (mirrors src/lib/subscriptionConfig.ts)
+    const TIER_OUTLETS: Record<string, number> = { basic: 1, gold: 1, platinum: 2, custom: 1 }
+    // Retail tier limits match restaurant for outlets in the current config, so a single map is fine.
+    const planMaxOutlets = TIER_OUTLETS[planName] ?? 1
+    const allowedOutlets = Math.max(planMaxOutlets, (merchantSource as any).max_stores || 0)
+
+    // Count existing active stores for this merchant under either FK
+    const orFilter = useCustomerFk
+      ? `customer_id.eq.${merchant_id}`
+      : `merchant_id.eq.${merchant_id},customer_id.eq.${merchant_id}`
     const { count } = await supabaseAdmin
       .from('stores')
       .select('id', { count: 'exact', head: true })
-      .eq('merchant_id', merchant_id)
+      .or(orFilter)
       .eq('is_active', true)
 
-    // PLAN ENFORCEMENT: outlet limit from merchant_subscription
     if (allowed.role !== 'admin' && allowed.role !== 'super_admin') {
-      const { data: sub } = await supabaseAdmin
-        .from('merchant_subscription')
-        .select('plan_name, outlet_limit, extra_outlets, expiry_date, status')
-        .eq('merchant_id', merchant_id)
-        .maybeSingle()
-
-      const planActive = sub && sub.status === 'active' && new Date(sub.expiry_date) >= new Date()
-      const allowedOutlets = planActive ? ((sub.outlet_limit || 1) + (sub.extra_outlets || 0)) : 1
-
       if ((count || 0) >= allowedOutlets) {
-        const required = (sub?.plan_name === 'gold') ? 'platinum' : 'platinum'
         return new Response(JSON.stringify({
-          error: `Outlet limit reached (${allowedOutlets}). Upgrade to Platinum for multi-outlet support.`,
-          required_plan: required,
+          error: `Outlet limit reached (${allowedOutlets}). Upgrade plan or buy an outlet add-on.`,
+          required_plan: planName === 'basic' ? 'platinum' : 'platinum',
         }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
       }
     } else {
-      const maxStores = merchant.max_stores ?? 999
-      if ((count || 0) >= maxStores) {
-        return new Response(JSON.stringify({ error: `Store limit reached (max ${maxStores})` }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      // Admin / super_admin still respect the merchant's plan so store inherits plan correctly.
+      if ((count || 0) >= allowedOutlets) {
+        return new Response(JSON.stringify({
+          error: `${(merchantSource as any).business_name || 'Merchant'} is on the ${planName.toUpperCase()} plan and already has ${count} of ${allowedOutlets} allowed outlet(s). Upgrade the merchant's plan first.`,
+        }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
       }
     }
 
@@ -149,17 +164,17 @@ serve(async (req) => {
       userId = authData.user.id
     }
 
-    // Insert the store
+    // Insert the store — link to whichever FK holds the merchant record so plan resolution works.
     const { data: dbStore, error: storeError } = await supabaseAdmin
       .from('stores')
       .insert({
         ...(store_id ? { id: store_id } : {}),
-        merchant_id,
+        ...(useCustomerFk ? { customer_id: merchant_id } : { merchant_id }),
         name: String(store_name).trim(),
         email: normalizedEmail,
         phone: phone || null,
         address: address || null,
-        business_type: business_type || 'restaurant',
+        business_type: merchantBizType || business_type || 'restaurant',
         country: country || 'India',
         currency_code: currency_code || 'INR',
         tax_type: tax_type || 'GST',
@@ -175,13 +190,13 @@ serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
-    // Attach store_manager role for the user
+    // Attach store_manager role linked to the SAME merchant FK so plan/feature lookups inherit correctly.
     const { error: roleErr } = await supabaseAdmin
       .from('user_roles')
       .insert({
         user_id: userId,
         role: 'store_manager',
-        merchant_id,
+        ...(useCustomerFk ? { customer_id: merchant_id } : { merchant_id }),
         store_id: dbStore.id,
         is_active: true,
       })
