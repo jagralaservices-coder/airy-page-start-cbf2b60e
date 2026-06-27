@@ -1527,12 +1527,12 @@ export const POSBillingPage: React.FC = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
-                      variant="ghost"
+                      variant="default"
                       size="icon"
-                      className="h-12 w-12 flex-shrink-0"
+                      className="h-12 w-12 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={() => navigate('/ui-customization')}
                     >
-                      <Settings className="w-[22px] h-[22px] text-muted-foreground" />
+                      <Settings className="w-[22px] h-[22px]" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom"><p>All Settings</p></TooltipContent>
