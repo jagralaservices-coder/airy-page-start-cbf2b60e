@@ -57,17 +57,19 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
     setError('');
 
     try {
-      // Verify password by attempting to sign in with current user's email
-      const { error: authError } = await supabase.auth.signInWithPassword({
-        email: user.email,
-        password: password,
+      // Verify password via dedicated endpoint — does NOT replace the
+      // caller's auth session (previous signInWithPassword call rotated the
+      // JWT and fired a SIGNED_IN event on every cancel).
+      const { data, error: authError } = await supabase.functions.invoke('verify-user-password', {
+        body: { password },
       });
 
-      if (authError) {
+      if (authError || !data?.valid) {
         setError(t('msg.incorrectPassword'));
         setIsVerifying(false);
         return;
       }
+
 
       // Password verified - proceed with cancellation
       onConfirm(cancelReason.trim());
