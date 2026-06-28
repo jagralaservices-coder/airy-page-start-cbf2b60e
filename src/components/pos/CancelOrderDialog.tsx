@@ -174,7 +174,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
                 setError('');
               }}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && password && cancelReason) {
+                if (e.key === 'Enter' && !isVerifying) {
                   handleVerifyAndCancel();
                 }
               }}
@@ -199,7 +199,8 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
           <Button
             variant="destructive"
             onClick={handleVerifyAndCancel}
-            disabled={isVerifying || !password || !cancelReason.trim() || foodPrepared === null}
+            disabled={isVerifying}
+            className="min-w-[150px] font-semibold"
           >
             {isVerifying ? (
               <>
