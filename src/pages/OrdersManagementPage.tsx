@@ -141,9 +141,9 @@ export const OrdersPage: React.FC = () => {
     setIsCancelDialogOpen(true);
   };
 
-  const handleConfirmCancel = (reason: string) => {
+  const handleConfirmCancel = (reason: string, foodPrepared: boolean) => {
     if (orderToCancel) {
-      cancelOrder(orderToCancel.id, reason);
+      cancelOrder(orderToCancel.id, reason, foodPrepared);
       setIsCancelDialogOpen(false);
       setOrderToCancel(null);
     }

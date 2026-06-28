@@ -20,7 +20,7 @@ import { useLocale } from '@/contexts/LocaleContext';
 interface CancelOrderDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason: string, foodPrepared: boolean) => void;
   orderNumber: string;
 }
 
@@ -34,6 +34,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
   const { user } = useSupabaseAuth();
   const [password, setPassword] = useState('');
   const [cancelReason, setCancelReason] = useState('');
+  const [foodPrepared, setFoodPrepared] = useState<'yes' | 'no' | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState('');
 
@@ -45,6 +46,11 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
 
     if (!cancelReason.trim()) {
       setError(t('msg.cancelReasonRequired'));
+      return;
+    }
+
+    if (foodPrepared === null) {
+      setError('Please confirm whether the food was prepared');
       return;
     }
 
@@ -72,7 +78,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
 
 
       // Password verified - proceed with cancellation
-      onConfirm(cancelReason.trim());
+      onConfirm(cancelReason.trim(), foodPrepared === 'yes');
       handleClose();
       toast.success(`${t('common.orderNo')} ${orderNumber} ${t('msg.orderCancelledSuccess')}`);
     } catch (err) {
@@ -85,6 +91,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
   const handleClose = () => {
     setPassword('');
     setCancelReason('');
+    setFoodPrepared(null);
     setError('');
     onClose();
   };
@@ -121,6 +128,35 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
               className="min-h-[80px]"
             />
           </div>
+
+          {/* Food Prepared? — controls inventory deduction */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              🍳 Was the food already prepared? *
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant={foodPrepared === 'yes' ? 'default' : 'outline'}
+                onClick={() => { setFoodPrepared('yes'); setError(''); }}
+                className="w-full"
+              >
+                Yes — deduct inventory
+              </Button>
+              <Button
+                type="button"
+                variant={foodPrepared === 'no' ? 'default' : 'outline'}
+                onClick={() => { setFoodPrepared('no'); setError(''); }}
+                className="w-full"
+              >
+                No — keep inventory
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Yes: raw materials were used, stock will be reduced. No: ingredients are still in stock.
+            </p>
+          </div>
+
 
           {/* Password Verification */}
           <div className="space-y-2">
@@ -163,7 +199,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
           <Button
             variant="destructive"
             onClick={handleVerifyAndCancel}
-            disabled={isVerifying || !password || !cancelReason.trim()}
+            disabled={isVerifying || !password || !cancelReason.trim() || foodPrepared === null}
           >
             {isVerifying ? (
               <>

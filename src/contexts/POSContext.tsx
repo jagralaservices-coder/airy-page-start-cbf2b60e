@@ -22,6 +22,7 @@ import {
   dbToLocalCreditPayment
 } from '@/lib/transformers';
 import { useStoreInitializer } from '@/hooks/useStoreInitializer';
+import { useInventoryDeduction } from '@/hooks/useInventoryDeduction';
 import {
   MenuItem,
   MenuItemIngredient,
@@ -226,7 +227,7 @@ interface POSContextType {
   directBillPrint: (paymentMethod: 'cash' | 'card' | 'upi' | 'split' | 'due' | 'part' | 'wallet' | 'credit' | 'access', customerInfo?: { name?: string; phone?: string; email?: string; address?: string }, paymentBreakdown?: { method: string; amount: number }[]) => Promise<Order | null>; // Direct bill without KOT (not in orders)
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
   updateOrderPaymentMethod: (orderId: string, paymentMethod: Order['paymentMethod']) => void;
-  cancelOrder: (orderId: string, reason?: string) => void;
+  cancelOrder: (orderId: string, reason?: string, foodPrepared?: boolean) => void;
   clearAllOrders: () => void;
   
   // Held Bills
@@ -445,6 +446,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Store initializer for first-time login full download
   const { initializeStoreSession } = useStoreInitializer();
+  const { deductInventoryForOrder } = useInventoryDeduction();
 
   // Fetch menu items from database based on active store (with ingredients)
   const fetchMenuItems = useCallback(async (storeId: string | null) => {}, []);
@@ -2074,7 +2076,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   // Cancel order with reason
-  const cancelOrder = (orderId: string, reason?: string) => {
+  const cancelOrder = (orderId: string, reason?: string, foodPrepared?: boolean) => {
     const order = orders.find(o => o.id === orderId);
     if (!order) return;
 
@@ -2082,7 +2084,8 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       ...order, 
       status: 'cancelled' as const,
       cancelReason: reason,
-      cancelledAt: new Date().toISOString()
+      cancelledAt: new Date().toISOString(),
+      foodPrepared: foodPrepared ?? false,
     };
 
     const updatedOrders = orders.map(o => 
@@ -2092,6 +2095,20 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setOrders(updatedOrders);
     saveOrderMutation.mutateAsync([cancelledOrder]); // Sync cancellation to cloud
 
+    // Inventory deduction: only when staff confirmed food was already prepared
+    // (raw materials consumed). If not prepared → stock stays intact.
+    if (foodPrepared && activeStoreId) {
+      const itemsForDeduction = order.items.map(it => ({
+        id: it.id,
+        name: it.name,
+        quantity: it.quantity,
+        category: (it as any).category,
+      }));
+      deductInventoryForOrder(activeStoreId, itemsForDeduction).catch(err =>
+        console.error('[CancelOrder] inventory deduction failed', err)
+      );
+    }
+
     // Free up table if dine-in
     if (order.orderType === 'dine-in' && order.tableNumber) {
       const table = tables.find(t => t.number === order.tableNumber);
@@ -2100,8 +2117,12 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
     }
 
-    toast.info(`Order #${order.kotNumber || order.id.slice(-6).toUpperCase()} cancelled`);
+    toast.info(
+      `Order #${order.kotNumber || order.id.slice(-6).toUpperCase()} cancelled` +
+      (foodPrepared ? ' • inventory deducted' : ' • inventory preserved')
+    );
   };
+
 
   const holdBill = () => {
     if (cart.length === 0) return;
