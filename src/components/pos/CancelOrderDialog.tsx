@@ -78,7 +78,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
 
 
       // Password verified - proceed with cancellation
-      onConfirm(cancelReason.trim());
+      onConfirm(cancelReason.trim(), foodPrepared === 'yes');
       handleClose();
       toast.success(`${t('common.orderNo')} ${orderNumber} ${t('msg.orderCancelledSuccess')}`);
     } catch (err) {
@@ -91,6 +91,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
   const handleClose = () => {
     setPassword('');
     setCancelReason('');
+    setFoodPrepared(null);
     setError('');
     onClose();
   };
