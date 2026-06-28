@@ -199,7 +199,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
           <Button
             variant="destructive"
             onClick={handleVerifyAndCancel}
-            disabled={isVerifying || !password || !cancelReason.trim()}
+            disabled={isVerifying || !password || !cancelReason.trim() || foodPrepared === null}
           >
             {isVerifying ? (
               <>
