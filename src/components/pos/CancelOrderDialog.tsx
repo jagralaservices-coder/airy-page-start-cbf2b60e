@@ -67,7 +67,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
       // caller's auth session (previous signInWithPassword call rotated the
       // JWT and fired a SIGNED_IN event on every cancel).
       const { data, error: authError } = await supabase.functions.invoke('verify-user-password', {
-        body: { password },
+        body: { password, email: user.email },
       });
 
       if (authError || !data?.valid) {
