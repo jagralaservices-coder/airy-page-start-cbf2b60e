@@ -11,6 +11,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.6";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
@@ -20,32 +21,39 @@ serve(async (req) => {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Require the caller to be authenticated; we only allow them to verify
-    // their OWN password.
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const sessionClient = createClient(SUPABASE_URL, ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: userData, error: userErr } = await sessionClient.auth.getUser(
-      authHeader.replace("Bearer ", ""),
-    );
-    if (userErr || !userData?.user?.email) {
-      return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const callerEmail = userData.user.email.toLowerCase();
-    const { password } = await req.json().catch(() => ({}));
+    const { password, email } = await req.json().catch(() => ({}));
     if (!password || typeof password !== "string") {
       return new Response(JSON.stringify({ error: "password_required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Prefer the authenticated caller's email when a fresh JWT is available.
+    // If the desktop/PWA restored an offline-first cached session and the JWT is
+    // stale, fall back to the caller-provided login email and verify it with the
+    // password below. This keeps verification isolated without rotating the
+    // browser session or forcing logout.
+    let callerEmail: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ") && authHeader !== "Bearer null" && !authHeader.endsWith("undefined")) {
+      const sessionClient = createClient(SUPABASE_URL, ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: userData, error: userErr } = await sessionClient.auth.getUser(
+        authHeader.replace("Bearer ", ""),
+      );
+      if (!userErr && userData?.user?.email) {
+        callerEmail = userData.user.email.toLowerCase();
+      }
+    }
+
+    const fallbackEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    if (!callerEmail && fallbackEmail) callerEmail = fallbackEmail;
+
+    if (!callerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(callerEmail)) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 

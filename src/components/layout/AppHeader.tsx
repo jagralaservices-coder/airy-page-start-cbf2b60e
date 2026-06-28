@@ -221,11 +221,16 @@ export const AppHeader: React.FC = () => {
       setPasswordError('Please enter your password');
       return;
     }
+
+    if (!user?.email) {
+      setPasswordError('Session not ready. Please try again.');
+      return;
+    }
     
     try {
       // Verify password via dedicated endpoint — does NOT touch our session.
       const { data, error } = await supabase.functions.invoke('verify-user-password', {
-        body: { password: storeChangePassword },
+        body: { password: storeChangePassword, email: user.email },
       });
 
       if (error || !data?.valid) {
