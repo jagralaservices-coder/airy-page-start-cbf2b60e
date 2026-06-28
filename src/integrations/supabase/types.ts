@@ -2070,7 +2070,7 @@ export type Database = {
       kot_station: "kitchen" | "bar" | "other"
       kot_status: "new" | "preparing" | "ready" | "served" | "cancelled"
       merchant_plan: "basic" | "gold" | "platinum"
-      order_status: "open" | "completed" | "voided" | "refunded"
+      order_status: "open" | "completed" | "voided" | "refunded" | "cancelled"
       order_type: "dine_in" | "takeaway" | "delivery"
       payment_method: "cash" | "card" | "upi" | "credit" | "other"
       subscription_status: "active" | "expired" | "cancelled"
@@ -2216,7 +2216,7 @@ export const Constants = {
       kot_station: ["kitchen", "bar", "other"],
       kot_status: ["new", "preparing", "ready", "served", "cancelled"],
       merchant_plan: ["basic", "gold", "platinum"],
-      order_status: ["open", "completed", "voided", "refunded"],
+      order_status: ["open", "completed", "voided", "refunded", "cancelled"],
       order_type: ["dine_in", "takeaway", "delivery"],
       payment_method: ["cash", "card", "upi", "credit", "other"],
       subscription_status: ["active", "expired", "cancelled"],
