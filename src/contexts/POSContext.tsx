@@ -226,7 +226,7 @@ interface POSContextType {
   directBillPrint: (paymentMethod: 'cash' | 'card' | 'upi' | 'split' | 'due' | 'part' | 'wallet' | 'credit' | 'access', customerInfo?: { name?: string; phone?: string; email?: string; address?: string }, paymentBreakdown?: { method: string; amount: number }[]) => Promise<Order | null>; // Direct bill without KOT (not in orders)
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
   updateOrderPaymentMethod: (orderId: string, paymentMethod: Order['paymentMethod']) => void;
-  cancelOrder: (orderId: string, reason?: string) => void;
+  cancelOrder: (orderId: string, reason?: string, foodPrepared?: boolean) => void;
   clearAllOrders: () => void;
   
   // Held Bills
