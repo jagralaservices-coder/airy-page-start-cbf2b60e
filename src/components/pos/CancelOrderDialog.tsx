@@ -129,6 +129,35 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
             />
           </div>
 
+          {/* Food Prepared? — controls inventory deduction */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              🍳 Was the food already prepared? *
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                variant={foodPrepared === 'yes' ? 'default' : 'outline'}
+                onClick={() => { setFoodPrepared('yes'); setError(''); }}
+                className="w-full"
+              >
+                Yes — deduct inventory
+              </Button>
+              <Button
+                type="button"
+                variant={foodPrepared === 'no' ? 'default' : 'outline'}
+                onClick={() => { setFoodPrepared('no'); setError(''); }}
+                className="w-full"
+              >
+                No — keep inventory
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Yes: raw materials were used, stock will be reduced. No: ingredients are still in stock.
+            </p>
+          </div>
+
+
           {/* Password Verification */}
           <div className="space-y-2">
             <Label htmlFor="password" className="flex items-center gap-2">
