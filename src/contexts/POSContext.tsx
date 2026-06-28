@@ -2076,7 +2076,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   };
 
   // Cancel order with reason
-  const cancelOrder = (orderId: string, reason?: string) => {
+  const cancelOrder = (orderId: string, reason?: string, foodPrepared?: boolean) => {
     const order = orders.find(o => o.id === orderId);
     if (!order) return;
 
@@ -2084,7 +2084,8 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       ...order, 
       status: 'cancelled' as const,
       cancelReason: reason,
-      cancelledAt: new Date().toISOString()
+      cancelledAt: new Date().toISOString(),
+      foodPrepared: foodPrepared ?? false,
     };
 
     const updatedOrders = orders.map(o => 
@@ -2094,6 +2095,20 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setOrders(updatedOrders);
     saveOrderMutation.mutateAsync([cancelledOrder]); // Sync cancellation to cloud
 
+    // Inventory deduction: only when staff confirmed food was already prepared
+    // (raw materials consumed). If not prepared → stock stays intact.
+    if (foodPrepared && activeStoreId) {
+      const itemsForDeduction = order.items.map(it => ({
+        id: it.id,
+        name: it.name,
+        quantity: it.quantity,
+        category: (it as any).category,
+      }));
+      deductInventoryForOrder(activeStoreId, itemsForDeduction).catch(err =>
+        console.error('[CancelOrder] inventory deduction failed', err)
+      );
+    }
+
     // Free up table if dine-in
     if (order.orderType === 'dine-in' && order.tableNumber) {
       const table = tables.find(t => t.number === order.tableNumber);
@@ -2102,8 +2117,12 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
     }
 
-    toast.info(`Order #${order.kotNumber || order.id.slice(-6).toUpperCase()} cancelled`);
+    toast.info(
+      `Order #${order.kotNumber || order.id.slice(-6).toUpperCase()} cancelled` +
+      (foodPrepared ? ' • inventory deducted' : ' • inventory preserved')
+    );
   };
+
 
   const holdBill = () => {
     if (cart.length === 0) return;
