@@ -20,7 +20,7 @@ import { useLocale } from '@/contexts/LocaleContext';
 interface CancelOrderDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (reason: string) => void;
+  onConfirm: (reason: string, foodPrepared: boolean) => void;
   orderNumber: string;
 }
 
@@ -34,6 +34,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
   const { user } = useSupabaseAuth();
   const [password, setPassword] = useState('');
   const [cancelReason, setCancelReason] = useState('');
+  const [foodPrepared, setFoodPrepared] = useState<'yes' | 'no' | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState('');
 
