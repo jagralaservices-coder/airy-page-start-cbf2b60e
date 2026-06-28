@@ -49,6 +49,11 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
       return;
     }
 
+    if (foodPrepared === null) {
+      setError('Please confirm whether the food was prepared');
+      return;
+    }
+
     if (!user?.email) {
       setError(t('msg.userNotLoggedIn'));
       return;
