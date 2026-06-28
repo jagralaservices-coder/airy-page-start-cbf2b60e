@@ -98,7 +98,7 @@ export const CancelOrderDialog: React.FC<CancelOrderDialogProps> = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <AlertDialogContent className="max-w-md">
+      <AlertDialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <AlertDialogHeader>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
