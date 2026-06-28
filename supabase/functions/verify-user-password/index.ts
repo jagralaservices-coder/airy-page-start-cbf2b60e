@@ -32,16 +32,16 @@ serve(async (req) => {
     const sessionClient = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: claims, error: claimsErr } = await sessionClient.auth.getClaims(
+    const { data: userData, error: userErr } = await sessionClient.auth.getUser(
       authHeader.replace("Bearer ", ""),
     );
-    if (claimsErr || !claims?.claims) {
+    if (userErr || !userData?.user?.email) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const callerEmail = String(claims.claims.email || "").toLowerCase();
+    const callerEmail = userData.user.email.toLowerCase();
     const { password } = await req.json().catch(() => ({}));
     if (!password || typeof password !== "string") {
       return new Response(JSON.stringify({ error: "password_required" }), {
