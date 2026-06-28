@@ -446,6 +446,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Store initializer for first-time login full download
   const { initializeStoreSession } = useStoreInitializer();
+  const { deductInventoryForOrder } = useInventoryDeduction();
 
   // Fetch menu items from database based on active store (with ingredients)
   const fetchMenuItems = useCallback(async (storeId: string | null) => {}, []);
