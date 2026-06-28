@@ -22,6 +22,7 @@ import {
   dbToLocalCreditPayment
 } from '@/lib/transformers';
 import { useStoreInitializer } from '@/hooks/useStoreInitializer';
+import { useInventoryDeduction } from '@/hooks/useInventoryDeduction';
 import {
   MenuItem,
   MenuItemIngredient,
