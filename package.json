@@ -1,7 +1,7 @@
 {
   "name": "vite_react_shadcn_ts",
   "private": true,
-  "version": "1.0.10",
+  "version": "1.0.11",
   "type": "module",
   "main": "electron-main.cjs",
   "scripts": {
@@ -121,7 +121,8 @@
     "publish": {
       "provider": "github",
       "owner": "jagralaservices-coder",
-      "repo": "airy-page-start-cbf2b60e"
+      "repo": "airy-page-start-cbf2b60e",
+      "releaseType": "release"
     },
     "directories": {
       "output": "dist-desktop"
