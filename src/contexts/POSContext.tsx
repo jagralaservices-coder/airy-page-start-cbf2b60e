@@ -22,7 +22,6 @@ import {
   dbToLocalCreditPayment
 } from '@/lib/transformers';
 import { useStoreInitializer } from '@/hooks/useStoreInitializer';
-import { useInventoryDeduction } from '@/hooks/useInventoryDeduction';
 import {
   MenuItem,
   MenuItemIngredient,
@@ -446,8 +445,6 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Store initializer for first-time login full download
   const { initializeStoreSession } = useStoreInitializer();
-  const { deductInventoryForOrder } = useInventoryDeduction();
-
   // Fetch menu items from database based on active store (with ingredients)
   const fetchMenuItems = useCallback(async (storeId: string | null) => {}, []);
 
@@ -1619,6 +1616,83 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  // Reverse stock/inventory deduction when a billed order is cancelled before food was prepared.
+  // Billing deducts stock at print time; cancel + "Food Prepared: No" must add that stock back.
+  const restoreInventoryForCancelledOrder = async (cartItems: CartItem[]) => {
+    console.log('[restoreInventory] Restoring inventory for cancelled order:', cartItems.length, 'items');
+    const stockChanges: string[] = [];
+    const inventoryChanges: string[] = [];
+    let currentInventory = JSON.parse(JSON.stringify(getInventory())) as typeof getInventory extends () => infer T ? T : never;
+    let inventoryUpdated = false;
+
+    const restoreInventoryItem = (inventoryId: string, quantityToRestore: number) => {
+      const invItemIndex = currentInventory.findIndex(i => i.id === inventoryId);
+      if (invItemIndex === -1) {
+        console.log('[restoreInventory] Inventory item not found:', inventoryId);
+        return;
+      }
+
+      const oldQuantity = currentInventory[invItemIndex].quantity;
+      const newQuantity = oldQuantity + quantityToRestore;
+      currentInventory[invItemIndex] = {
+        ...currentInventory[invItemIndex],
+        quantity: newQuantity,
+        lastUpdated: new Date(),
+      };
+      inventoryUpdated = true;
+      inventoryChanges.push(`${currentInventory[invItemIndex].name}: ${formatQuantityDisplay(oldQuantity, currentInventory[invItemIndex].unit)} → ${formatQuantityDisplay(newQuantity, currentInventory[invItemIndex].unit)}`);
+    };
+
+    for (const cartItem of cartItems) {
+      const menuItem = menuItems.find(m => m.id === cartItem.id) || cartItem;
+
+      if (menuItem.stock !== undefined && menuItem.stock !== null) {
+        const oldStock = Number(menuItem.stock || 0);
+        const newStock = oldStock + cartItem.quantity;
+
+        await supabase
+          .from('menu_items')
+          .update({ stock: newStock })
+          .eq('id', cartItem.id);
+
+        stockChanges.push(`${menuItem.name}: ${oldStock} → ${newStock}`);
+        setMenuItemsState(prev => prev.map(item =>
+          item.id === cartItem.id ? { ...item, stock: newStock } : item
+        ));
+      }
+
+      if (menuItem.ingredients && menuItem.ingredients.length > 0) {
+        for (const ingredient of menuItem.ingredients) {
+          const ingredientInBaseUnit = convertToBaseUnit(ingredient.quantityRequired, ingredient.unit);
+          restoreInventoryItem(ingredient.inventoryItemId, ingredientInBaseUnit * cartItem.quantity);
+        }
+      } else if (menuItem.linkedInventoryId && menuItem.gramagePerUnit && menuItem.gramagePerUnit > 0) {
+        restoreInventoryItem(menuItem.linkedInventoryId, menuItem.gramagePerUnit * cartItem.quantity);
+      } else {
+        console.log('[restoreInventory] No inventory link for:', menuItem.name, '- skipping restore');
+      }
+    }
+
+    if (inventoryUpdated) {
+      setInventory(currentInventory);
+      window.dispatchEvent(new Event('storage'));
+    }
+
+    if (stockChanges.length > 0) {
+      toast.success('Menu Stock Restored', {
+        description: stockChanges.slice(0, 3).join(', ') + (stockChanges.length > 3 ? ` +${stockChanges.length - 3} more` : ''),
+        duration: 3000,
+      });
+    }
+
+    if (inventoryChanges.length > 0) {
+      toast.success('Inventory Restored', {
+        description: inventoryChanges.slice(0, 3).join(', ') + (inventoryChanges.length > 3 ? ` +${inventoryChanges.length - 3} more` : ''),
+        duration: 4000,
+      });
+    }
+  };
+
   // DB-first bill/KOT number generation
   const generateBillNumberFromDB = useCallback(async (): Promise<string> => {
     const storeId = isStoreLogin 
@@ -2095,17 +2169,11 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setOrders(updatedOrders);
     saveOrderMutation.mutateAsync([cancelledOrder]); // Sync cancellation to cloud
 
-    // Inventory deduction: only when staff confirmed food was already prepared
-    // (raw materials consumed). If not prepared → stock stays intact.
-    if (foodPrepared && activeStoreId) {
-      const itemsForDeduction = order.items.map(it => ({
-        id: it.id,
-        name: it.name,
-        quantity: it.quantity,
-        category: (it as any).category,
-      }));
-      deductInventoryForOrder(activeStoreId, itemsForDeduction).catch(err =>
-        console.error('[CancelOrder] inventory deduction failed', err)
+    // Bill print already deducted stock. If food was NOT prepared, ingredients
+    // were not consumed, so reverse that deduction. If prepared, keep stock deducted.
+    if (foodPrepared === false) {
+      restoreInventoryForCancelledOrder(order.items).catch(err =>
+        console.error('[CancelOrder] inventory restore failed', err)
       );
     }
 
@@ -2119,7 +2187,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     toast.info(
       `Order #${order.kotNumber || order.id.slice(-6).toUpperCase()} cancelled` +
-      (foodPrepared ? ' • inventory deducted' : ' • inventory preserved')
+      (foodPrepared ? ' • inventory kept deducted' : ' • inventory restored')
     );
   };
 
