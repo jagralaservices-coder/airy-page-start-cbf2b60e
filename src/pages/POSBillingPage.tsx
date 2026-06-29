@@ -1389,17 +1389,70 @@ export const POSBillingPage: React.FC = () => {
               </Button>
             )}
 
-            {/* Table selection sheet */}
+            {/* Table Management sheet */}
             <Sheet open={showTableSelector} onOpenChange={setShowTableSelector}>
-              <SheetContent side="bottom" className="h-[60vh] flex flex-col">
-                <SheetHeader>
-                  <SheetTitle>{t('tables.selectTable')}</SheetTitle>
+              <SheetContent side="bottom" className="h-[70vh] flex flex-col">
+                <SheetHeader className="pb-2">
+                  <SheetTitle className="text-xl">{t('tables.tableManagement')}</SheetTitle>
+                  <p className="text-sm text-muted-foreground">Select a table to start order</p>
                 </SheetHeader>
-                <div className="flex-1 overflow-y-auto p-4">
+
+                {/* Legend */}
+                <div className="flex items-center gap-4 px-1 pb-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-success" />
+                    <span className="text-xs text-muted-foreground">{t('tables.vacant')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-warning" />
+                    <span className="text-xs text-muted-foreground">{t('tables.occupied')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-destructive" />
+                    <span className="text-xs text-muted-foreground">{t('tables.billed')}</span>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-2">
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                     {tables.map(table => {
-                      const isOccupied = table.status === 'occupied' && table.id !== selectedTableId;
+                      const tableOrders = orders.filter(o => o.orderType === 'dine-in' && o.tableNumber === table.number);
+                      const hasActiveOrder = tableOrders.some(o => ['pending', 'preparing', 'ready'].includes(o.status));
+                      const hasCompletedOrder = tableOrders.some(o => o.status === 'completed');
+
+                      let effectiveStatus: 'available' | 'occupied' | 'reserved' | 'billed' = table.status;
+                      if (effectiveStatus !== 'billed' && effectiveStatus !== 'reserved') {
+                        if (hasActiveOrder) effectiveStatus = 'occupied';
+                        else if (hasCompletedOrder) effectiveStatus = 'billed';
+                      }
+
+                      const isOccupied = effectiveStatus === 'occupied' && table.id !== selectedTableId;
+                      const isBilled = effectiveStatus === 'billed';
                       const isSelected = table.id === selectedTableId;
+
+                      const badgeClass = isBilled
+                        ? 'bg-destructive/15 text-destructive'
+                        : isOccupied
+                          ? 'bg-warning/15 text-warning'
+                          : 'bg-success/15 text-success';
+
+                      const borderClass = isBilled
+                        ? 'border-destructive/30'
+                        : isOccupied
+                          ? 'border-warning/30'
+                          : 'border-success/30';
+
+                      const textClass = isBilled
+                        ? 'text-destructive'
+                        : isOccupied
+                          ? 'text-warning'
+                          : 'text-success';
+
+                      const label = effectiveStatus === 'available' ? t('tables.vacant')
+                        : effectiveStatus === 'occupied' ? t('tables.occupied')
+                        : effectiveStatus === 'billed' ? t('tables.billed')
+                        : t('tables.reserved');
+
                       return (
                         <button
                           key={table.id}
@@ -1409,19 +1462,22 @@ export const POSBillingPage: React.FC = () => {
                             setShowTableSelector(false);
                           }}
                           className={cn(
-                            'p-3 rounded-lg border text-sm font-medium transition-all',
-                            isSelected
-                              ? 'bg-primary text-primary-foreground border-primary'
-                              : isOccupied
-                                ? 'bg-muted text-muted-foreground border-border cursor-not-allowed opacity-60'
-                                : 'bg-card text-card-foreground border-border hover:border-primary hover:bg-primary/5'
+                            'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
+                            isSelected ? 'ring-2 ring-primary ring-offset-1' : '',
+                            borderClass,
+                            isOccupied ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-sm hover:scale-[1.02]'
                           )}
                         >
-                          <div className="flex flex-col items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            <span>{table.number}</span>
-                            <span className="text-[10px] opacity-80">{table.capacity} {t('common.seats')}</span>
-                          </div>
+                          <span className={cn('w-10 h-10 flex items-center justify-center rounded-lg text-base font-bold', badgeClass)}>
+                            {table.number}
+                          </span>
+                          <span className={cn('text-xs font-semibold', textClass)}>
+                            {label}
+                          </span>
+                          <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                            <Users className="w-3 h-3" />
+                            {table.capacity}
+                          </span>
                         </button>
                       );
                     })}
