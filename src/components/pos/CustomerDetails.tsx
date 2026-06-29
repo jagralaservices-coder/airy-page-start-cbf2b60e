@@ -120,7 +120,7 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({ customer, onCh
     }
   };
 
-  const showAddressFields = orderType === 'delivery';
+  const showAddressFields = true;
   if (!isOpen) return null;
 
   return (
@@ -202,7 +202,7 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({ customer, onCh
         </button>
         <button onClick={handleClear} className="pos-btn-ghost py-2 px-3 text-sm flex items-center justify-center gap-1.5 flex-1">
           <X className="w-4 h-4" />
-          {t('common.clear') || 'Clear'}
+          Clear
         </button>
       </div>
     </div>
