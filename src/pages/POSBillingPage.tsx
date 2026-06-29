@@ -1732,7 +1732,7 @@ export const POSBillingPage: React.FC = () => {
           <button
             id="show-details-btn"
             onClick={() => setShowBillingSummary(!showBillingSummary)}
-            className="w-full py-1 px-2 flex items-center justify-center gap-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
+            className="w-full py-2 px-2 flex items-center justify-center gap-2 text-xs bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             {showBillingSummary ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             {showBillingSummary ? t('common.hideDetails') : t('common.showDetails')}
@@ -2006,7 +2006,7 @@ export const POSBillingPage: React.FC = () => {
                     onClick={buttonActions[btn.id] || (() => {})}
                     disabled={cart.length === 0 || isProcessingSale}
                     className={cn(
-                      "h-11 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl bg-primary text-primary-foreground border border-primary hover:bg-primary/90",
+                      "h-9 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl bg-primary text-primary-foreground border border-primary hover:bg-primary/90",
                       isHighlighted && "ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background scale-[1.02]"
                     )}
                   >
