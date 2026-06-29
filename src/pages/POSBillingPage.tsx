@@ -1740,7 +1740,7 @@ export const POSBillingPage: React.FC = () => {
 
           {/* Expandable Summary */}
           {showBillingSummary && (
-            <div className="space-y-1.5 border-t border-border bg-secondary/30 p-2">
+            <div className="space-y-1 border-t border-border bg-secondary/30 p-1.5">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">{t('common.subtotal')}</span>
                 <span>{formatCurrency(cartSubtotal)}</span>
