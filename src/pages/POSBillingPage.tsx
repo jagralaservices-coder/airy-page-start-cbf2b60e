@@ -1477,7 +1477,7 @@ export const POSBillingPage: React.FC = () => {
       </div>
 
       {/* Right Panel - Cart & Billing */}
-      <div id="right-billing-panel" className="w-full max-w-[600px] lg:w-[clamp(380px,42vw,600px)] flex-shrink-0 overflow-hidden border-l border-border bg-card flex flex-col">
+      <div id="right-billing-panel" className="w-[clamp(340px,40vw,600px)] flex-shrink-0 overflow-hidden border-l border-border bg-card flex flex-col">
         {/* Cart Header with Table Select */}
         <div className="p-1 border-b border-border space-y-1">
           <div className="flex items-center justify-between gap-1">
