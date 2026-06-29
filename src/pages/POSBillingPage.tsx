@@ -1836,58 +1836,46 @@ export const POSBillingPage: React.FC = () => {
             </div>
           )}
 
-          {/* Complimentary & Total */}
-          <div className="space-y-1 border-t border-border p-1.5">
-            <div className="flex items-center justify-between gap-4">
-              <div id="complimentary-paid-container" className="flex items-center gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    checked={isComplimentary}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setShowComplimentaryDialog(true);
-                      } else {
-                        setIsComplimentary(false);
-                        setComplimentaryNote('');
-                      }
-                    }}
-                    className="w-4 h-4 rounded border-border accent-primary" 
-                  />
-                  <span className="text-xs font-medium text-foreground">{t('common.complimentary')}</span>
-                </label>
+          {/* Complimentary, Paid, Total & Amount in one line */}
+          <div className="flex items-center justify-between border-t border-border p-1.5">
+            <div id="complimentary-paid-container" className="flex items-center gap-3">
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input 
+                  type="checkbox" 
+                  checked={isComplimentary}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setShowComplimentaryDialog(true);
+                    } else {
+                      setIsComplimentary(false);
+                      setComplimentaryNote('');
+                    }
+                  }}
+                  className="w-3.5 h-3.5 rounded border-border accent-primary" 
+                />
+                <span className="text-[10px] font-medium text-foreground">{t('common.complimentary')}</span>
+              </label>
 
-                <label className="flex items-center gap-2 cursor-pointer border-l border-border pl-4">
-                  <input 
-                    type="checkbox" 
-                    checked={isPaid}
-                    onChange={(e) => setIsPaid(e.target.checked)}
-                    className="w-4 h-4 rounded border-border accent-primary" 
-                  />
-                  <span className="text-xs font-medium text-foreground">Paid</span>
-                </label>
-              </div>
-
-              {isComplimentary && complimentaryNote && (
-                <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded truncate max-w-[150px]">
-                  {complimentaryNote}
-                </span>
-              )}
+              <label className="flex items-center gap-1 cursor-pointer border-l border-border pl-3">
+                <input 
+                  type="checkbox" 
+                  checked={isPaid}
+                  onChange={(e) => setIsPaid(e.target.checked)}
+                  className="w-3.5 h-3.5 rounded border-border accent-primary" 
+                />
+                <span className="text-[10px] font-medium text-foreground">Paid</span>
+              </label>
             </div>
-            
-            {/* Total */}
-            <div className="flex justify-between text-sm font-bold">
+
+            <div className="flex items-center gap-2 text-xs font-bold">
               <span>{t('common.total')}</span>
               <span className={cn("text-primary", isComplimentary && "line-through text-muted-foreground")}>
                 {formatCurrency(Math.round(isComplimentary ? cartTotal : finalTotal))}
               </span>
+              {isComplimentary && (
+                <span className="text-success">₹0</span>
+              )}
             </div>
-            {isComplimentary && (
-              <div className="flex justify-between text-sm font-bold text-success">
-                <span>{t('common.complimentaryTotal')}</span>
-                <span>₹0</span>
-              </div>
-            )}
           </div>
 
           {/* Payment Methods */}
