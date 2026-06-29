@@ -20,8 +20,13 @@ import {
   X,
   Settings2,
   Link,
-  Upload
+  Upload,
+  History,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Factory
 } from 'lucide-react';
+import { logInventoryHistory, getInventoryHistory, InventoryHistoryEntry } from '@/lib/inventoryHistory';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
