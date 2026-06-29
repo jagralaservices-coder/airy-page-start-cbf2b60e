@@ -590,7 +590,7 @@ export const POSBillingPage: React.FC = () => {
         setDeliveryCharge(0);
         setContainerCharge(0);
         setTip(0);
-        setCustomer({ name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' });
+        setCustomer({ name: '', phone: '', email: '', address: '' });
         setPartPaymentDetails([]);
         setIsPaid(false);
         // Auto-revert to takeaway after each completed sale
