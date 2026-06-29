@@ -174,7 +174,7 @@ export interface Table {
   id: string;
   number: number;
   capacity: number;
-  status: 'available' | 'occupied' | 'reserved';
+  status: 'available' | 'occupied' | 'reserved' | 'billed';
   currentOrderId?: string;
   name?: string; // Custom table name/alias (e.g., "Window Seat", "VIP 1")
   section?: string; // Section this table belongs to
