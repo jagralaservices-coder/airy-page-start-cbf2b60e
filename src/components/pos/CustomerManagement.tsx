@@ -170,9 +170,6 @@ export const CustomerManagement: React.FC = () => {
               phone: c.phone || '', 
               email: c.email || '', 
               address: c.address || '', 
-              city: c.city || '', 
-              state: c.state || '', 
-              pincode: c.pincode || '', 
               createdAt: c.created_at,
               pendingSync: false 
             };
@@ -185,12 +182,12 @@ export const CustomerManagement: React.FC = () => {
         } catch {}
       }
     }
-    setShowAddDialog(false); setEditingCustomer(null); setFormData({ name: '', phone: '', address: '', city: '', state: '', pincode: '', email: '' });
+    setShowAddDialog(false); setEditingCustomer(null); setFormData({ name: '', phone: '', address: '', email: '' });
   };
 
   const handleEdit = (customer: Customer) => {
     setEditingCustomer(customer);
-    setFormData({ name: customer.name, phone: customer.phone, address: customer.address || '', city: customer.city || '', state: customer.state || '', pincode: customer.pincode || '', email: customer.email || '' });
+    setFormData({ name: customer.name, phone: customer.phone, address: customer.address || '', email: customer.email || '' });
     setShowAddDialog(true);
   };
 

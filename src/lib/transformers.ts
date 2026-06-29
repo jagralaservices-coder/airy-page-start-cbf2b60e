@@ -81,9 +81,6 @@ export const dbToLocalCustomer = (db: any): Customer => ({
   phone: db.phone || '',
   email: db.email || '',
   address: db.address || '',
-  city: db.city || '',
-  state: db.state || '',
-  pincode: db.pincode || '',
   createdAt: db.created_at,
   lastUpdated: db.updated_at || db.created_at,
 });
