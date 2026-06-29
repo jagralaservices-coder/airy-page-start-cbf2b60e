@@ -1363,13 +1363,13 @@ export const POSBillingPage: React.FC = () => {
         {/* Order Type & Search */}
         <div className="p-3 bg-card border-b border-border space-y-3">
           {/* Order Type Tabs */}
-          <div id="order-type-tabs" className="flex gap-2">
+          <div id="order-type-tabs" className="flex flex-wrap gap-1.5 items-center min-w-0">
             {orderTypes.map(type => (
               <button
                 key={type.id}
                 onClick={() => setCurrentOrderType(type.id)}
                 className={cn(
-                  'px-4 py-2 rounded-lg font-medium text-sm transition-all',
+                  'px-2.5 sm:px-3 lg:px-4 h-9 rounded-lg font-medium text-xs sm:text-sm transition-all whitespace-nowrap shrink-0',
                   currentOrderType === type.id
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground hover:bg-muted'
@@ -1383,13 +1383,14 @@ export const POSBillingPage: React.FC = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 px-2 text-xs gap-1"
+                className="h-9 px-2 text-xs gap-1 shrink-0 whitespace-nowrap max-w-[140px] truncate"
                 onClick={() => setShowTableSelector(true)}
               >
-                <MapPin className="w-3.5 h-3.5" />
-                {selectedTable ? `${t('common.table')} ${selectedTable.number}` : t('tables.selectTable')}
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{selectedTable ? `${t('common.table')} ${selectedTable.number}` : t('tables.selectTable')}</span>
               </Button>
             )}
+
 
             {/* Table Management sheet */}
             <Sheet open={showTableSelector} onOpenChange={setShowTableSelector}>
