@@ -275,9 +275,12 @@ export const POSBillingPage: React.FC = () => {
   };
 
   const handleAddonsConfirm = (selected: Array<{ addon: Addon; quantity: number }>) => {
+    const parent = addonParentForSheet;
+    const parentKey = parent ? (parent.cartItemId || parent.id) : '';
     selected.forEach(({ addon, quantity }) => {
       const mi: MenuItem = {
-        id: `addon-${addon.id}`,
+        // encode parent linkage in id so each parent gets its own addon line
+        id: `addon||${addon.id}||${parentKey}`,
         name: `+ ${addon.name}`,
         price: addon.price,
         category: addon.category || 'addons',
@@ -287,6 +290,15 @@ export const POSBillingPage: React.FC = () => {
       for (let i = 0; i < quantity; i++) addToCart(mi);
     });
   };
+
+  const getAddonParentKey = (item: CartItem): string | null => {
+    if (typeof item.id === 'string' && item.id.startsWith('addon||')) {
+      const parts = item.id.split('||');
+      return parts[2] || null;
+    }
+    return null;
+  };
+
 
   // Handle variation selection from popup
   const handleVariationSelect = (item: MenuItem, variation?: MenuItemVariation, quantity: number = 1) => {
