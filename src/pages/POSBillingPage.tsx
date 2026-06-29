@@ -1479,7 +1479,7 @@ export const POSBillingPage: React.FC = () => {
       {/* Right Panel - Cart & Billing */}
       <div id="right-billing-panel" className="w-[600px] flex-shrink-0 overflow-hidden border-l border-border bg-card flex flex-col">
         {/* Cart Header with Table Select */}
-        <div className="p-2 border-b border-border space-y-2">
+        <div className="p-1 border-b border-border space-y-1">
           <div className="flex items-center justify-between gap-1">
             <h2 className="font-semibold text-sm whitespace-nowrap">{t('common.currentOrder')}</h2>
             <TooltipProvider delayDuration={300}>
