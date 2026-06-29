@@ -20,7 +20,7 @@ interface CustomerDetailsProps {
   onToggle?: () => void;
 }
 
-const emptyCustomer: CustomerData = { name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' };
+const emptyCustomer: CustomerData = { name: '', phone: '', email: '', address: '' };
 
 const getStoreId = (): string | null => {
   try { const d = localStorage.getItem('pos_active_store_data'); if (d) { const p = JSON.parse(d); if (p?.id) return p.id; } } catch {}
