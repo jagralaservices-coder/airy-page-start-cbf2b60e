@@ -1620,7 +1620,12 @@ export const POSBillingPage: React.FC = () => {
                       variant="default"
                       size="icon"
                       className="h-10 w-10 xl:h-14 xl:w-14 flex-shrink-0 relative bg-primary text-primary-foreground hover:bg-primary/90"
-                      onClick={() => setShowHeldBills(!showHeldBills)}
+                      onClick={() => {
+                        if (showHeldBills) {
+                          setSelectedHeldBillIds([]);
+                        }
+                        setShowHeldBills(!showHeldBills);
+                      }}
                     >
                       <Play className="w-5 h-5 xl:w-[26px] xl:h-[26px]" />
                       {heldBills.length > 0 && (
