@@ -238,7 +238,7 @@ interface POSContextType {
 
   // Tables
   tables: Table[];
-  updateTableStatus: (tableId: string, status: 'available' | 'occupied' | 'reserved') => void;
+  updateTableStatus: (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed') => void;
 
   // KOT
   printKOT: (order: Order) => void;
@@ -2279,7 +2279,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setHeldBills(newHeldBills);
   };
 
-  const updateTableStatus = (tableId: string, status: 'available' | 'occupied' | 'reserved') => {
+  const updateTableStatus = (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed') => {
     const newTables = tables.map((t) => (t.id === tableId ? { ...t, status } : t));
     setTablesState(newTables);
     setTables(newTables);
