@@ -598,9 +598,6 @@ export const MenuManagement: React.FC = () => {
               <th className="text-left p-4 text-muted-foreground font-medium">Category</th>
               <th className="text-right p-4 text-muted-foreground font-medium">Price</th>
               <th className="text-center p-4 text-muted-foreground font-medium">Variations</th>
-              
-              
-              <th className="text-center p-4 text-muted-foreground font-medium">Status</th>
               <th className="text-center p-4 text-muted-foreground font-medium">Actions</th>
             </tr>
           </thead>
@@ -647,24 +644,6 @@ export const MenuManagement: React.FC = () => {
                       {item.variations && item.variations.length > 0
                         ? `${item.variations.length} options`
                         : "Add"}
-                    </button>
-                  </td>
-                  <td className="p-4">
-                    <button
-                      onClick={() => toggleItemAvailability(item.id)}
-                      className="mx-auto flex items-center gap-2"
-                    >
-                      {item.isAvailable ? (
-                        <>
-                          <ToggleRight className="w-8 h-8 text-success" />
-                          <span className="text-sm text-success">Available</span>
-                        </>
-                      ) : (
-                        <>
-                          <ToggleLeft className="w-8 h-8 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">Off</span>
-                        </>
-                      )}
                     </button>
                   </td>
                   <td className="p-4">
