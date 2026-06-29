@@ -2130,7 +2130,7 @@ export const POSBillingPage: React.FC = () => {
                   }}
                   className="w-3.5 h-3.5 rounded border-border accent-primary" 
                 />
-                <span className="text-[10px] font-medium text-foreground">{t('common.complimentary')}</span>
+                <span className="text-[10px] font-bold text-foreground">{t('common.complimentary')}</span>
               </label>
 
               <label className="flex items-center gap-1 cursor-pointer border-l border-border pl-3">
@@ -2140,7 +2140,7 @@ export const POSBillingPage: React.FC = () => {
                   onChange={(e) => setIsPaid(e.target.checked)}
                   className="w-3.5 h-3.5 rounded border-border accent-primary" 
                 />
-                <span className="text-[10px] font-medium text-foreground">Paid</span>
+                <span className="text-[10px] font-bold text-foreground">Paid</span>
               </label>
             </div>
 
