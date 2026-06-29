@@ -1453,6 +1453,27 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       
       console.log('[AutoProduce] SUCCESS:', invItem.name, 'produced', quantityProduced, invItem.unit,
         '- Stock:', oldParentQty, '->', currentInventory[invItemIndex].quantity);
+
+      // Log production history
+      try {
+        const producedFrom = itemComponents.map((c: any) => {
+          const child = currentInventory.find(i => i.id === c.childInventoryId);
+          return {
+            name: child?.name || 'Unknown',
+            quantity: convertToBaseUnit(c.quantityRequired, c.unit) * batchesToProduce,
+            unit: child?.unit || c.unit,
+          };
+        });
+        logInventoryHistory({
+          type: 'production',
+          inventoryId: invItem.id,
+          inventoryName: invItem.name,
+          quantity: quantityProduced,
+          unit: invItem.unit,
+          producedFrom,
+          source: 'Auto-production (recipe)',
+        });
+      } catch (err) { console.warn('[AutoProduce] history log failed', err); }
       
       const isPartial = batchesToProduce < batchesNeededIdeal;
       if (isPartial) {
