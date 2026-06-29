@@ -458,6 +458,24 @@ const PurchaseManagementView: React.FC<{ onBack: () => void }> = ({ onBack }) =>
     setLocalInventory(updatedInventory);
     toast.success(`"${formData.name}" updated`);
 
+    // Log purchase history if stock was increased via edit
+    {
+      const deltaInBase = quantityInBase - editingItem.quantity;
+      if (deltaInBase > 0) {
+        logInventoryHistory({
+          type: 'purchase',
+          inventoryId: editingItem.id,
+          inventoryName: formData.name,
+          quantity: deltaInBase,
+          unit: baseUnit,
+          costPerUnit: costPerUnit,
+          totalCost: costPerUnit > 0 ? deltaInBase * costPerUnit : undefined,
+          costUnit: formData.costUnit,
+          source: 'Stock adjustment (edit)',
+        });
+      }
+    }
+
     setFormData({ name: '', quantity: '', unit: 'kg', costPerUnit: '', costUnit: 'kg', minStock: '10', isManufactured: false });
     setEditingItem(null);
     setShowEditDialog(false);
