@@ -2251,18 +2251,39 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const holdBill = () => {
     if (cart.length === 0) return;
 
-    const bill: HeldBill = {
-      id: generateId(),
-      items: [...cart],
-      tableNumber: selectedTable?.number,
-      heldAt: new Date(),
-    };
+    // Auto-merge into existing held bill for the same dine-in table
+    const existingIdx = selectedTable?.number != null
+      ? heldBills.findIndex((b) => b.tableNumber === selectedTable.number)
+      : -1;
 
-    const newHeldBills = [...heldBills, bill];
+    let newHeldBills: HeldBill[];
+    if (existingIdx >= 0) {
+      const existing = heldBills[existingIdx];
+      const mergedItems = [...existing.items];
+      cart.forEach((ci) => {
+        mergedItems.push({ ...ci, cartItemId: generateId() });
+      });
+      const updated: HeldBill = {
+        ...existing,
+        items: mergedItems,
+        heldAt: new Date(),
+      };
+      newHeldBills = heldBills.map((b, i) => (i === existingIdx ? updated : b));
+    } else {
+      const bill: HeldBill = {
+        id: generateId(),
+        items: [...cart],
+        tableNumber: selectedTable?.number,
+        heldAt: new Date(),
+      };
+      newHeldBills = [...heldBills, bill];
+    }
+
     setHeldBillsState(newHeldBills);
     setHeldBills(newHeldBills);
     clearCart();
   };
+
 
   const recallBill = (billId: string) => {
     const bill = heldBills.find((b) => b.id === billId);
