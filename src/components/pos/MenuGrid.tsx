@@ -3,7 +3,7 @@ import { usePOS } from '@/contexts/POSContext';
 import { useLocale } from '@/contexts/LocaleContext';
 import { MenuItem, MenuItemVariation } from '@/lib/store';
 import { cn } from '@/lib/utils';
-import { Clock, Layers, Plus, Search, X, ChevronRight, PackagePlus } from 'lucide-react';
+import { Clock, Layers, Plus, Search, X, ChevronRight, PackagePlus, Sparkles } from 'lucide-react';
 import { VariationSelectorSheet } from './VariationSelectorSheet';
 import { AddonSelectorSheet } from './AddonSelectorSheet';
 import { getAddons, Addon } from '@/lib/addons';
