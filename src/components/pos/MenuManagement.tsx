@@ -78,19 +78,60 @@ export const MenuManagement: React.FC = () => {
   const [variationMenuItem, setVariationMenuItem] = useState<MenuItem | null>(null);
   const [showBarcodeDialog, setShowBarcodeDialog] = useState(false);
   const [barcodeMenuItem, setBarcodeMenuItem] = useState<MenuItem | null>(null);
-  const [showAddAddons, setShowAddAddons] = useState(false);
-  const [addonStep, setAddonStep] = useState<'select-product' | 'select-addons'>('select-product');
-  const [addonProductId, setAddonProductId] = useState<string>('');
-  const [addonSelections, setAddonSelections] = useState<string[]>([]);
-  const [addonSearch, setAddonSearch] = useState('');
+  const [showAddonsManager, setShowAddonsManager] = useState(false);
+  const [addons, setAddons] = useState<import('@/lib/addons').Addon[]>([]);
+  const [addonForm, setAddonForm] = useState({ name: '', price: '', category: '' });
+  const [editingAddonId, setEditingAddonId] = useState<string | null>(null);
 
-  const saveAddons = () => {
-    if (!addonProductId) return;
-    const item = menuItems.find(m => m.id === addonProductId);
-    if (!item) return;
-    updateMenuItem(addonProductId, { ...(item as any), addons: addonSelections } as any);
-    toast.success(`${addonSelections.length} addon(s) linked to ${item.name}`);
-    setShowAddAddons(false);
+  useEffect(() => {
+    const load = () => {
+      import('@/lib/addons').then(({ getAddons }) => setAddons(getAddons()));
+    };
+    load();
+    window.addEventListener('addons-updated', load);
+    return () => window.removeEventListener('addons-updated', load);
+  }, []);
+
+  const handleSaveAddon = async () => {
+    if (!addonForm.name.trim() || !addonForm.price) {
+      toast.error('Name and price required');
+      return;
+    }
+    const price = parseFloat(addonForm.price);
+    if (isNaN(price) || price < 0) {
+      toast.error('Invalid price');
+      return;
+    }
+    const mod = await import('@/lib/addons');
+    if (editingAddonId) {
+      mod.updateAddon(editingAddonId, { name: addonForm.name.trim(), price, category: addonForm.category.trim() || undefined });
+      toast.success('Addon updated');
+    } else {
+      mod.addAddon({ name: addonForm.name.trim(), price, category: addonForm.category.trim() || undefined, isAvailable: true });
+      toast.success('Addon added');
+    }
+    setAddonForm({ name: '', price: '', category: '' });
+    setEditingAddonId(null);
+  };
+
+  const handleEditAddon = (a: import('@/lib/addons').Addon) => {
+    setEditingAddonId(a.id);
+    setAddonForm({ name: a.name, price: String(a.price), category: a.category || '' });
+  };
+
+  const handleDeleteAddon = async (id: string) => {
+    const mod = await import('@/lib/addons');
+    mod.deleteAddon(id);
+    toast.success('Addon deleted');
+    if (editingAddonId === id) {
+      setEditingAddonId(null);
+      setAddonForm({ name: '', price: '', category: '' });
+    }
+  };
+
+  const toggleAddonAvailable = async (a: import('@/lib/addons').Addon) => {
+    const mod = await import('@/lib/addons');
+    mod.updateAddon(a.id, { isAvailable: !a.isAvailable });
   };
 
   // Load inventory items
