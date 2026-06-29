@@ -235,6 +235,7 @@ interface POSContextType {
   holdBill: () => void;
   recallBill: (billId: string) => void;
   deleteHeldBill: (billId: string) => void;
+  mergeBills: (billIds: string[]) => void;
 
   // Tables
   tables: Table[];
