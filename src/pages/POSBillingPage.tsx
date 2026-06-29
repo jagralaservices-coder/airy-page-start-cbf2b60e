@@ -1519,7 +1519,7 @@ export const POSBillingPage: React.FC = () => {
                   <TooltipContent side="bottom"><p>{t('common.recall')}</p></TooltipContent>
                 </Tooltip>
                 )}
-                {isButtonVisible('qrMenu') && canAccess('qrMenuOrdering') && <QRMenuGenerator className="h-14 w-14" iconClassName="w-[26px] h-[26px]" />}
+                {isButtonVisible('qrMenu') && canAccess('qrMenuOrdering') && <QRMenuGenerator className="h-10 w-10 xl:h-14 xl:w-14" iconClassName="w-5 h-5 xl:w-[26px] xl:h-[26px]" />}
                 {isButtonVisible('qrOrders') && canAccess('qrMenuOrdering') && (
                   <Tooltip>
                     <TooltipTrigger asChild>
