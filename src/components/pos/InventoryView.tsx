@@ -24,8 +24,11 @@ import {
   History,
   ArrowDownCircle,
   ArrowUpCircle,
-  Factory
+  Factory,
+  UtensilsCrossed
 } from 'lucide-react';
+import { MenuIngredientsDialog } from './MenuIngredientsDialog';
+import { getMenuItems, setMenuItems, MenuItem, MenuItemIngredient } from '@/lib/store';
 import { logInventoryHistory, getInventoryHistory, InventoryHistoryEntry } from '@/lib/inventoryHistory';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,7 +54,7 @@ import { InventoryComponentsDialog } from './InventoryComponentsDialog';
 import { BulkInventoryUpload } from './BulkInventoryUpload';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type ViewType = 'main' | 'purchaseManagement' | 'requestForPurchase' | 'wastage' | 'addWastage' | 'convertRawMaterial' | 'currentStock' | 'openingClosing' | 'indentManagement' | 'productionExecution' | 'bulkUpload' | 'smartInventory' | 'inventoryHistory';
+type ViewType = 'main' | 'purchaseManagement' | 'requestForPurchase' | 'wastage' | 'addWastage' | 'convertRawMaterial' | 'currentStock' | 'openingClosing' | 'indentManagement' | 'productionExecution' | 'bulkUpload' | 'smartInventory' | 'inventoryHistory' | 'menuRecipes';
 
 interface InventoryMenuSection {
   title: string;
@@ -115,11 +118,18 @@ export const InventoryView: React.FC = () => {
 
     sections.push({ title: 'Purchase', items: purchaseItems });
 
-    // Wastage and Conversion - only Gold+ (recipe-based)
+    // Wastage and Conversion + Menu Recipes - only Gold+ (recipe-based)
     if (hasRecipe) {
       sections.push({
-        title: 'Wastage and Conversion',
+        title: 'Recipes & Conversion',
         items: [
+          {
+            id: 'menuRecipes',
+            icon: UtensilsCrossed,
+            title: 'Menu Recipes',
+            description: 'Link inventory ingredients to your menu items so stock auto-deducts on every sale.',
+            color: 'bg-blue-50 text-blue-600'
+          },
           {
             id: 'wastage',
             icon: Trash2,
@@ -213,6 +223,9 @@ export const InventoryView: React.FC = () => {
   }
   if (activeView === 'inventoryHistory') {
     return <InventoryHistoryView onBack={() => setActiveView('main')} inventory={inventory} />;
+  }
+  if (activeView === 'menuRecipes') {
+    return <MenuRecipesView onBack={() => setActiveView('main')} />;
   }
 
   return (
@@ -1619,3 +1632,101 @@ const InventoryHistoryView: React.FC<{ onBack: () => void; inventory: InventoryI
     </div>
   );
 };
+
+// Menu Recipes - link inventory ingredients to menu items
+const MenuRecipesView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+  const [items, setItems] = useState<MenuItem[]>(getMenuItems());
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDialog, setShowDialog] = useState(false);
+  const [selected, setSelected] = useState<MenuItem | null>(null);
+
+  const filtered = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return items;
+    return items.filter(i => i.name.toLowerCase().includes(q));
+  }, [items, searchQuery]);
+
+  const openFor = (item: MenuItem) => {
+    setSelected(item);
+    setShowDialog(true);
+  };
+
+  const handleSave = (ingredients: MenuItemIngredient[]) => {
+    if (!selected) return;
+    const all = getMenuItems();
+    const updated = all.map(m => m.id === selected.id ? { ...m, ingredients } : m);
+    setMenuItems(updated);
+    setItems(updated);
+    setShowDialog(false);
+    setSelected(null);
+    toast.success('Recipe updated');
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border/50">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onBack}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-lg font-bold text-foreground">🍳 Menu Recipes</h1>
+            <p className="text-xs text-muted-foreground">{items.length} menu items</p>
+          </div>
+        </div>
+        <div className="px-4 pb-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search menu items..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-10"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 py-4 space-y-2 pb-24">
+        {filtered.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            <UtensilsCrossed className="w-12 h-12 mx-auto mb-3 opacity-40" />
+            <p className="text-sm">No menu items found</p>
+          </div>
+        ) : (
+          filtered.map(item => {
+            const count = item.ingredients?.length || 0;
+            return (
+              <button
+                key={item.id}
+                onClick={() => openFor(item)}
+                className="flex items-center gap-3 w-full p-4 bg-card border border-border/60 rounded-2xl hover:bg-accent/50 transition-all active:scale-[0.98] text-left"
+              >
+                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <UtensilsCrossed className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-foreground truncate">{item.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {count > 0 ? `${count} ingredient${count > 1 ? 's' : ''} linked` : 'No recipe set'}
+                  </p>
+                </div>
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${count > 0 ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
+                  {count > 0 ? 'Set' : 'Add'}
+                </span>
+              </button>
+            );
+          })
+        )}
+      </div>
+
+      <MenuIngredientsDialog
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        menuItem={selected}
+        onSave={handleSave}
+      />
+    </div>
+  );
+};
+

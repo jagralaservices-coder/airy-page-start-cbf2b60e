@@ -103,7 +103,7 @@ const navItems: NavItem[] = [
   { path: '/inventory', icon: Package, labelKey: 'nav.inventory', requiredRoles: ['admin', 'owner', 'store_manager'], featureKey: 'basicInventory' },
   { path: '/expenses', icon: Wallet, labelKey: 'nav.expenses', requiredRoles: ['admin', 'owner', 'store_manager'], featureKey: 'expenseTracking' },
   { path: '/delivery', icon: Truck, labelKey: 'nav.delivery', featureKey: 'deliveryTracking' },
-  { path: '/online-orders', icon: Globe, labelKey: 'Online Orders', featureKey: 'swiggyZomato' },
+  
   { path: '/qr-orders', icon: QrCode, labelKey: 'Menu Orders', featureKey: 'qrMenuOrdering' },
   { path: '/staff', icon: Users, labelKey: 'nav.staff', requiredRoles: ['admin', 'owner', 'store_manager'], featureKey: 'staffManagement' },
   { path: '/stores', icon: Store, labelKey: 'nav.stores', requiredRoles: ['admin'], featureKey: 'multiOutlet' },
@@ -227,20 +227,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
         )}
       </div>
 
-      {/* Online Status */}
-      <div className={cn('flex items-center gap-2 px-4 py-2.5 border-b border-sidebar-border', collapsed && 'justify-center')}>
-        {isOnline ? (
-          <>
-            <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-            {!collapsed && <span className="text-xs text-success font-medium">{t('common.online')}</span>}
-          </>
-        ) : (
-          <>
-            <div className="w-2 h-2 rounded-full bg-warning" />
-            {!collapsed && <span className="text-xs text-warning font-medium">{t('common.offlineMode')}</span>}
-          </>
-        )}
-      </div>
 
       {/* Store Info */}
       {activeStore && (
