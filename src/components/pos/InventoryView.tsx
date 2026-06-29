@@ -162,6 +162,13 @@ export const InventoryView: React.FC = () => {
           title: 'Indent Management',
           description: 'Calculate the raw materials required to prepare specific items in bulk.',
           color: 'bg-yellow-50 text-yellow-600'
+        },
+        {
+          id: 'inventoryHistory',
+          icon: History,
+          title: 'Inventory History',
+          description: 'Track every purchase, every consumption, and every auto-production of raw materials.',
+          color: 'bg-indigo-50 text-indigo-600'
         }
       ]
     });
