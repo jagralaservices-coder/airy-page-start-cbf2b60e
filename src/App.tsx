@@ -425,9 +425,6 @@ const AppRoutes = () => {
       <Route path="/customers" element={
         <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><CustomersPage /></ProtectedRoute>
       } />
-      <Route path="/online-orders" element={
-        <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><FeatureGuard featureKey="swiggyZomato"><OnlineOrdersPage /></FeatureGuard></ProtectedRoute>
-      } />
       <Route path="/qr-orders" element={
         <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><FeatureGuard featureKey="qrMenuOrdering"><QROrdersPage /></FeatureGuard></ProtectedRoute>
       } />
