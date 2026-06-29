@@ -1322,7 +1322,7 @@ export const POSBillingPage: React.FC = () => {
 
     <div className={cn("h-[calc(100vh-56px)] flex overflow-hidden", editMode.isEditMode && "mt-[88px] h-[calc(100vh-56px-88px)]")}>
       {/* Left Panel - Categories (Vertical) */}
-      <div id="categories-sidebar" className="w-24 bg-card border-r border-border flex flex-col overflow-hidden">
+      <div id="categories-sidebar" className="w-16 xl:w-24 bg-card border-r border-border flex flex-col overflow-hidden">
         <div className="p-2 flex-1 overflow-y-auto no-scrollbar">
           <button
             onClick={() => setActiveCategory('all')}
