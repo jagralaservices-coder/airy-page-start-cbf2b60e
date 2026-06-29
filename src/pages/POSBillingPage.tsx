@@ -2189,9 +2189,9 @@ export const POSBillingPage: React.FC = () => {
                 onClick={() => handlePaymentSelect('upi')}
                 disabled={cart.length === 0}
                 className={cn(
-                  'h-9 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs font-semibold font-semibold bg-primary text-primary-foreground border-primary hover:bg-primary/90',
-                  selectedPayment === 'upi' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
-                  activeSection === 'payments' && paymentHighlightIndex === 2 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
+                  'h-9 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs font-semibold font-semibold bg-warning text-warning-foreground border-warning hover:bg-warning/90',
+                  selectedPayment === 'upi' && 'ring-2 ring-warning-foreground/60 ring-offset-2 ring-offset-background',
+                  activeSection === 'payments' && paymentHighlightIndex === 2 && 'ring-2 ring-warning ring-offset-1 scale-[1.02]',
                   cart.length === 0 && 'opacity-50 cursor-not-allowed'
                 )}
               >
