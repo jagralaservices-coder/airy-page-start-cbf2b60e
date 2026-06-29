@@ -164,7 +164,7 @@ export const POSBillingPage: React.FC = () => {
   });
   const [showTaxDialog, setShowTaxDialog] = useState(false);
   const [showCustomItemDialog, setShowCustomItemDialog] = useState(false);
-  const [showAddonSheet, setShowAddonSheet] = useState(false);
+  const [addonParentForSheet, setAddonParentForSheet] = useState<CartItem | null>(null);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(selectedTable?.id || null);
   const [selectedItemForVariation, setSelectedItemForVariation] = useState<MenuItem | null>(null);
   const [variationSheetOpen, setVariationSheetOpen] = useState(false);
