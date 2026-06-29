@@ -3,7 +3,7 @@ import { usePOS } from '@/contexts/POSContext';
 import { useLocale } from '@/contexts/LocaleContext';
 import { MenuItem, MenuItemVariation } from '@/lib/store';
 import { cn } from '@/lib/utils';
-import { Clock, Layers, Plus, Search, X, ChevronRight, PackagePlus } from 'lucide-react';
+import { Clock, Layers, Plus, Search, X, ChevronRight, PackagePlus, Sparkles } from 'lucide-react';
 import { VariationSelectorSheet } from './VariationSelectorSheet';
 import { AddonSelectorSheet } from './AddonSelectorSheet';
 import { getAddons, Addon } from '@/lib/addons';
@@ -276,6 +276,20 @@ export const MenuGrid = forwardRef<HTMLDivElement>((_, ref) => {
             <PackagePlus className="w-6 h-6 text-primary" />
             <span className="text-[10px] font-bold text-primary leading-tight text-center">+ Others</span>
           </button>
+
+          {/* Addons Button */}
+          {hasAnyAvailableAddons() && (
+            <button
+              onClick={() => {
+                setAddonParentName('Addons');
+                setAddonSheetOpen(true);
+              }}
+              className="rounded-xl border-2 border-dashed border-primary/30 hover:border-primary bg-card p-2 flex flex-col items-center justify-center gap-1 transition-all hover:shadow-md active:scale-95 min-h-[80px]"
+            >
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="text-[10px] font-bold text-primary leading-tight text-center">+ Addons</span>
+            </button>
+          )}
 
           {filteredItems.map((item) => (
             <button
