@@ -200,9 +200,9 @@ export const POSBillingPage: React.FC = () => {
   const [customer, setCustomer] = useState(() => {
     try {
       const saved = localStorage.getItem('pos_billing_customer');
-      return saved ? JSON.parse(saved) : { name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' };
+      return saved ? JSON.parse(saved) : { name: '', phone: '', email: '', address: '' };
     } catch {
-      return { name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' };
+      return { name: '', phone: '', email: '', address: '' };
     }
   });
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
