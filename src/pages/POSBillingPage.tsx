@@ -1628,9 +1628,9 @@ export const POSBillingPage: React.FC = () => {
         )}
 
         {/* Cart Items */}
-        <div className={cn("flex-1 min-h-[100px] overflow-y-auto p-3 space-y-2 transition-all duration-200", activeSection === 'cart' && "ring-2 ring-primary ring-inset bg-primary/[0.005]")}>
+        <div className={cn("flex-1 min-h-[60px] overflow-y-auto p-1 space-y-1 transition-all duration-200", activeSection === 'cart' && "ring-2 ring-primary ring-inset bg-primary/[0.005]")}>
           {cart.length === 0 ? (
-            <div className="flex min-h-[220px] items-center justify-center text-center text-muted-foreground text-sm">
+            <div className="flex min-h-[60px] items-center justify-center text-center text-muted-foreground text-sm">
               {t('pos.emptyCart')}
             </div>
           ) : (
