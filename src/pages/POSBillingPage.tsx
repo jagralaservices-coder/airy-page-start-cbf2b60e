@@ -44,6 +44,9 @@ import {
   PackagePlus,
   QrCode,
   ShoppingBag,
+  CalendarClock,
+  X,
+
   Landmark
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
