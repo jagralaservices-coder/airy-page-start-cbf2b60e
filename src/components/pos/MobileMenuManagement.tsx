@@ -275,16 +275,6 @@ export const MobileMenuManagement: React.FC = () => {
         </button>
       </header>
 
-      {/* Low Stock Warning */}
-      {lowStockItems.length > 0 && (
-        <div className="mx-3 mt-2 bg-warning/10 border border-warning/20 rounded-xl p-3 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
-          <p className="text-xs text-foreground">
-            <span className="font-medium">Low Stock:</span> {lowStockItems.slice(0, 3).map(i => i.name).join(', ')}
-            {lowStockItems.length > 3 && ` +${lowStockItems.length - 3} more`}
-          </p>
-        </div>
-      )}
 
       {/* Search */}
       <div className="p-3 bg-card border-b border-border">
