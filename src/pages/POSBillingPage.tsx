@@ -263,6 +263,11 @@ export const POSBillingPage: React.FC = () => {
       return;
     }
 
+    if (item.id.startsWith('addons-')) {
+      setShowAddonSheet(true);
+      return;
+    }
+
     if (!item.isAvailable) return;
     
     if (item.variations && item.variations.length > 0) {
