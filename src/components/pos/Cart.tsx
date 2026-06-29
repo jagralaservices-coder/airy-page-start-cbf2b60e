@@ -226,7 +226,7 @@ export const Cart = forwardRef<HTMLDivElement>((_, ref) => {
       };
       
       setShowPayment(false);
-      setCustomer({ name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' });
+      setCustomer({ name: '', phone: '', email: '', address: '' });
       setCartItemNotes({});
       setShowSplitDialog(false);
       setSplitPersons(2);
