@@ -118,11 +118,18 @@ export const InventoryView: React.FC = () => {
 
     sections.push({ title: 'Purchase', items: purchaseItems });
 
-    // Wastage and Conversion - only Gold+ (recipe-based)
+    // Wastage and Conversion + Menu Recipes - only Gold+ (recipe-based)
     if (hasRecipe) {
       sections.push({
-        title: 'Wastage and Conversion',
+        title: 'Recipes & Conversion',
         items: [
+          {
+            id: 'menuRecipes',
+            icon: UtensilsCrossed,
+            title: 'Menu Recipes',
+            description: 'Link inventory ingredients to your menu items so stock auto-deducts on every sale.',
+            color: 'bg-blue-50 text-blue-600'
+          },
           {
             id: 'wastage',
             icon: Trash2,
