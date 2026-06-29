@@ -175,7 +175,7 @@ export const OperationsPage: React.FC = () => {
     // Show Stores only for owner login (not store login)
     ...(isAdmin && !isStoreLogin ? [{ id: 'stores', icon: Store, label: t('operations.stores'), path: '/stores' }] : []),
     // Main Operations
-    { id: 'online-orders', icon: Globe, label: t('operations.onlineOrders'), path: '/online-orders', featureKey: 'swiggyZomato' as keyof typeof FEATURES },
+    
     
     { id: 'customers', icon: Users, label: t('operations.customers'), path: '/customers' },
     { id: 'inventory', icon: Package, label: t('operations.inventory'), path: '/inventory', featureKey: 'basicInventory' as keyof typeof FEATURES },
