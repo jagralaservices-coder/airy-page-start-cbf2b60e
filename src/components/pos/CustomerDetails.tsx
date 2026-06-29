@@ -120,7 +120,7 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({ customer, onCh
     }
   };
 
-  const showAddressFields = orderType === 'delivery';
+  const showAddressFields = true;
   if (!isOpen) return null;
 
   return (
