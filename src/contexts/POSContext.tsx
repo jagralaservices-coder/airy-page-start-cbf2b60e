@@ -290,7 +290,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [heldBills, setHeldBillsState] = useState<HeldBill[]>([]);
   const [tables, setTablesState] = useState<Table[]>([]);
   const [currentOrderType, setCurrentOrderType] = useState<'dine-in' | 'takeaway' | 'delivery' | 'online'>(() => {
-    return (sessionStorage.getItem('pos_current_order_type') as any) || (localStorage.getItem('pos_current_order_type') as any) || 'dine-in';
+    return (sessionStorage.getItem('pos_current_order_type') as any) || (localStorage.getItem('pos_current_order_type') as any) || 'takeaway';
   });
   const [selectedTable, setSelectedTable] = useState<Table | null>(() => {
     try {
