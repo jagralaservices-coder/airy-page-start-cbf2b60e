@@ -229,16 +229,7 @@ export const POSBillingPage: React.FC = () => {
       isAvailable: true,
     };
 
-    const addonsItem: MenuItem = {
-      id: `addons-${activeCategory}`,
-      name: 'Addons',
-      price: 0,
-      category: activeCategory === 'all' ? 'addons' : activeCategory,
-      color: 'hsl(var(--card))',
-      isAvailable: true,
-    };
-
-    return [othersItem, addonsItem, ...baseProducts];
+    return [othersItem, ...baseProducts];
   }, [menuItems, activeCategory, searchQuery]);
 
   const activeCategories = useMemo(() => {
