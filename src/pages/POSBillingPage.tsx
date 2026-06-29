@@ -1479,7 +1479,7 @@ export const POSBillingPage: React.FC = () => {
       {/* Right Panel - Cart & Billing */}
       <div id="right-billing-panel" className="w-[600px] flex-shrink-0 overflow-hidden border-l border-border bg-card flex flex-col">
         {/* Cart Header with Table Select */}
-        <div className="p-2 border-b border-border space-y-2">
+        <div className="p-1 border-b border-border space-y-1">
           <div className="flex items-center justify-between gap-1">
             <h2 className="font-semibold text-sm whitespace-nowrap">{t('common.currentOrder')}</h2>
             <TooltipProvider delayDuration={300}>
@@ -1628,9 +1628,9 @@ export const POSBillingPage: React.FC = () => {
         )}
 
         {/* Cart Items */}
-        <div className={cn("flex-1 min-h-[100px] overflow-y-auto p-3 space-y-2 transition-all duration-200", activeSection === 'cart' && "ring-2 ring-primary ring-inset bg-primary/[0.005]")}>
+        <div className={cn("flex-1 min-h-[60px] overflow-y-auto p-1 space-y-1 transition-all duration-200", activeSection === 'cart' && "ring-2 ring-primary ring-inset bg-primary/[0.005]")}>
           {cart.length === 0 ? (
-            <div className="flex min-h-[220px] items-center justify-center text-center text-muted-foreground text-sm">
+            <div className="flex min-h-[60px] items-center justify-center text-center text-muted-foreground text-sm">
               {t('pos.emptyCart')}
             </div>
           ) : (
