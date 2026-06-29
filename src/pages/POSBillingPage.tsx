@@ -1594,28 +1594,6 @@ export const POSBillingPage: React.FC = () => {
             </TooltipProvider>
           </div>
 
-          {/* Table Selection */}
-          {canAccess('tableManagement') && currentOrderType === 'dine-in' && (
-            <div id="table-select-container" className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-muted-foreground" />
-              <Select value={selectedTableId || ''} onValueChange={handleTableChange}>
-                <SelectTrigger className="flex-1 h-9">
-                  <SelectValue placeholder={t('tables.selectTable')} />
-                </SelectTrigger>
-                <SelectContent className="bg-popover">
-                  {tables.map(table => (
-                    <SelectItem 
-                      key={table.id} 
-                      value={table.id}
-                      disabled={table.status === 'occupied' && table.id !== selectedTableId}
-                    >
-                      {t('common.table')} {table.number} ({table.capacity} {t('common.seats')}) - {table.status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
         </div>
 
         {/* Customer Details */}
