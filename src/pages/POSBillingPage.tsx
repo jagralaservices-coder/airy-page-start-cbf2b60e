@@ -11,6 +11,8 @@ import { BarcodeButton } from '@/components/pos/BarcodeButton';
 import { useBarcodeScanner } from '@/hooks/useBarcodeScanner';
 import { LinkBarcodeDialog } from '@/components/pos/LinkBarcodeDialog';
 import { CustomItemDialog } from '@/components/pos/CustomItemDialog';
+import { AddonSelectorSheet } from '@/components/pos/AddonSelectorSheet';
+import { getAddons, type Addon } from '@/lib/addons';
 import { PromptPriceWeightDialog } from '@/components/pos/PromptPriceWeightDialog';
 import { 
   Search, 
