@@ -1732,7 +1732,7 @@ export const POSBillingPage: React.FC = () => {
           <button
             id="show-details-btn"
             onClick={() => setShowBillingSummary(!showBillingSummary)}
-            className="w-full py-1 px-2 flex items-center justify-center gap-2 text-xs text-muted-foreground hover:bg-muted transition-colors"
+            className="w-full py-2 px-2 flex items-center justify-center gap-2 text-xs bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             {showBillingSummary ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
             {showBillingSummary ? t('common.hideDetails') : t('common.showDetails')}
