@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { usePOS } from '@/contexts/POSContext';
 import { useLocale } from '@/contexts/LocaleContext';
-import { formatCurrency as formatCurrencyLib, MenuItem, MenuItemVariation } from '@/lib/store';
+import { formatCurrency as formatCurrencyLib, MenuItem, MenuItemVariation, CartItem } from '@/lib/store';
 import { directPrint } from '@/lib/printUtils';
 import { generateProfessionalBill, generateKOTContent } from '@/lib/billTemplate';
 import { useIsMobile } from '@/hooks/use-mobile';
