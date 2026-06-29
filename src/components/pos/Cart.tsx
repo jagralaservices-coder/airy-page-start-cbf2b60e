@@ -87,7 +87,7 @@ export const Cart = forwardRef<HTMLDivElement>((_, ref) => {
   const [showHeldBills, setShowHeldBills] = useState(false);
   const [showPrintDialog, setShowPrintDialog] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
-  const [customer, setCustomer] = useState({ name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' });
+  const [customer, setCustomer] = useState({ name: '', phone: '', email: '', address: '' });
   const [cartItemNotes, setCartItemNotes] = useState<Record<string, string>>({});
   const [showSplitDialog, setShowSplitDialog] = useState(false);
   const [splitPersons, setSplitPersons] = useState(2);
@@ -205,7 +205,7 @@ export const Cart = forwardRef<HTMLDivElement>((_, ref) => {
       name: customer.name,
       phone: customer.phone,
       email: customer.email,
-      address: [customer.address, customer.city, customer.state, customer.pincode].filter(Boolean).join(', '),
+      address: customer.address,
     }, paymentBreakdown);
     if (order) {
       const completedOrderData = {
@@ -226,7 +226,7 @@ export const Cart = forwardRef<HTMLDivElement>((_, ref) => {
       };
       
       setShowPayment(false);
-      setCustomer({ name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' });
+      setCustomer({ name: '', phone: '', email: '', address: '' });
       setCartItemNotes({});
       setShowSplitDialog(false);
       setSplitPersons(2);

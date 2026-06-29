@@ -50,9 +50,6 @@ export interface Customer {
   name: string;
   phone: string;
   address?: string;
-  city?: string;
-  state?: string;
-  pincode?: string;
   email?: string;
   createdAt: string | Date;
   totalOrders?: number;

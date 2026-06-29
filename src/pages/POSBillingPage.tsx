@@ -200,9 +200,9 @@ export const POSBillingPage: React.FC = () => {
   const [customer, setCustomer] = useState(() => {
     try {
       const saved = localStorage.getItem('pos_billing_customer');
-      return saved ? JSON.parse(saved) : { name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' };
+      return saved ? JSON.parse(saved) : { name: '', phone: '', email: '', address: '' };
     } catch {
-      return { name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' };
+      return { name: '', phone: '', email: '', address: '' };
     }
   });
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
@@ -519,7 +519,7 @@ export const POSBillingPage: React.FC = () => {
         name: customer.name,
         phone: customer.phone,
         email: customer.email,
-        address: [customer.address, customer.city, customer.state, customer.pincode].filter(Boolean).join(', '),
+        address: customer.address,
       }, paymentToUse === 'part' ? partPaymentDetails : accessBreakdown);
 
       if (order) {
@@ -530,7 +530,7 @@ export const POSBillingPage: React.FC = () => {
             customerName: customer.name,
             customerPhone: customer.phone,
             customerEmail: customer.email,
-            customerAddress: [customer.address, customer.city, customer.state, customer.pincode].filter(Boolean).join(', '),
+            customerAddress: customer.address,
           });
           const kotContent = generateKOT(order);
 
@@ -590,7 +590,7 @@ export const POSBillingPage: React.FC = () => {
         setDeliveryCharge(0);
         setContainerCharge(0);
         setTip(0);
-        setCustomer({ name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' });
+        setCustomer({ name: '', phone: '', email: '', address: '' });
         setPartPaymentDetails([]);
         setIsPaid(false);
         // Auto-revert to takeaway after each completed sale
