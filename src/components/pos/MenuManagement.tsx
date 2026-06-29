@@ -506,29 +506,6 @@ export const MenuManagement: React.FC = () => {
                 </div>
               </div>
 
-              {/* Stock Alert Threshold */}
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-warning" />
-                <Input
-                  type="number"
-                  placeholder="Stock Alert Threshold (optional)"
-                  value={editItem.stockAlertThreshold}
-                  onChange={(e) => setEditItem(prev => ({ ...prev, stockAlertThreshold: e.target.value }))}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Alert when stock falls below this value. Leave empty for no alert.
-              </p>
-              
-              <p className="text-sm text-muted-foreground">
-                Current stock: {editingItem.stock !== undefined ? editingItem.stock : 'Unlimited'}
-                {editingItem.stockAlertThreshold !== undefined && (
-                  <span className="ml-2 text-warning">• Alert at: {editingItem.stockAlertThreshold}</span>
-                )}
-                {hasRecipeAccess && editingItem.linkedInventoryId && (
-                  <span className="ml-2 text-primary">• Linked to inventory</span>
-                )}
-              </p>
               <Button onClick={handleEditItem} className="w-full">
                 <Edit className="w-4 h-4 mr-2" /> Update Item
               </Button>
