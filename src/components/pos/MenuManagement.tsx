@@ -594,7 +594,7 @@ export const MenuManagement: React.FC = () => {
             Bulk Upload
           </button>
           <button 
-            onClick={() => { setAddonStep('select-product'); setAddonProductId(''); setAddonSelections([]); setShowAddAddons(true); }}
+            onClick={() => { setEditingAddonId(null); setAddonForm({ name: '', price: '', category: '' }); setShowAddonsManager(true); }}
             className="pos-btn-secondary px-4 py-2 flex items-center gap-2"
           >
             <PlusCircle className="w-5 h-5" />
@@ -762,126 +762,122 @@ export const MenuManagement: React.FC = () => {
         menuItem={barcodeMenuItem}
       />
 
-      {/* Add Addons Dialog */}
-      {showAddAddons && (
+      {/* Addons Manager Dialog */}
+      {showAddonsManager && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
           <div className="bg-card rounded-xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-xl border border-border">
             <div className="flex justify-between items-center p-6 border-b border-border">
               <div>
-                <h3 className="text-lg font-bold">
-                  {addonStep === 'select-product' ? 'Add Addons — Select Product' : 'Select Addons'}
-                </h3>
-                {addonStep === 'select-addons' && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    For: {menuItems.find(m => m.id === addonProductId)?.name}
-                  </p>
-                )}
+                <h3 className="text-lg font-bold">Addons</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Manage addons separately from menu items
+                </p>
               </div>
-              <button onClick={() => setShowAddAddons(false)} className="p-2 hover:bg-secondary rounded-lg">
+              <button onClick={() => setShowAddonsManager(false)} className="p-2 hover:bg-secondary rounded-lg">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-6 flex-1 overflow-y-auto">
-              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <div className="p-6 border-b border-border bg-secondary/30">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                 <input
                   type="text"
-                  placeholder={addonStep === 'select-product' ? 'Search product...' : 'Search addons...'}
-                  value={addonSearch}
-                  onChange={(e) => setAddonSearch(e.target.value)}
-                  className="pos-input pl-10"
+                  placeholder="Addon name *"
+                  value={addonForm.name}
+                  onChange={(e) => setAddonForm({ ...addonForm, name: e.target.value })}
+                  className="pos-input"
+                />
+                <input
+                  type="number"
+                  placeholder="Price *"
+                  value={addonForm.price}
+                  onChange={(e) => setAddonForm({ ...addonForm, price: e.target.value })}
+                  className="pos-input"
+                />
+                <input
+                  type="text"
+                  placeholder="Category (optional)"
+                  value={addonForm.category}
+                  onChange={(e) => setAddonForm({ ...addonForm, category: e.target.value })}
+                  className="pos-input"
                 />
               </div>
+              <div className="flex gap-2 justify-end">
+                {editingAddonId && (
+                  <button
+                    onClick={() => { setEditingAddonId(null); setAddonForm({ name: '', price: '', category: '' }); }}
+                    className="pos-btn-secondary px-4 py-2"
+                  >
+                    Cancel Edit
+                  </button>
+                )}
+                <button onClick={handleSaveAddon} className="pos-btn-primary px-4 py-2 flex items-center gap-2">
+                  <Plus className="w-4 h-4" />
+                  {editingAddonId ? 'Update Addon' : 'Add Addon'}
+                </button>
+              </div>
+            </div>
 
-              {addonStep === 'select-product' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {menuItems
-                    .filter(m => m.name.toLowerCase().includes(addonSearch.toLowerCase()))
-                    .map(item => {
-                      const existing = ((item as any).addons as string[] | undefined) || [];
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => {
-                            setAddonProductId(item.id);
-                            setAddonSelections(existing);
-                            setAddonSearch('');
-                            setAddonStep('select-addons');
-                          }}
-                          className="text-left p-3 rounded-lg border border-border hover:border-primary hover:bg-secondary/50 transition-colors"
-                        >
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {formatCurrency(item.price)} • {existing.length} addon(s)
-                          </p>
-                        </button>
-                      );
-                    })}
-                  {menuItems.length === 0 && (
-                    <p className="text-sm text-muted-foreground col-span-full text-center py-8">
-                      No menu items yet. Add a product first.
-                    </p>
-                  )}
-                </div>
+            <div className="p-6 flex-1 overflow-y-auto">
+              {addons.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No addons yet. Add your first addon above.
+                </p>
               ) : (
                 <div className="space-y-2">
-                  {menuItems
-                    .filter(m => m.id !== addonProductId && m.name.toLowerCase().includes(addonSearch.toLowerCase()))
-                    .map(item => {
-                      const checked = addonSelections.includes(item.id);
-                      return (
-                        <label
-                          key={item.id}
-                          className={cn(
-                            "flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors",
-                            checked ? "border-primary bg-primary/5" : "border-border hover:bg-secondary/50"
-                          )}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={(e) => {
-                              setAddonSelections(prev =>
-                                e.target.checked ? [...prev, item.id] : prev.filter(id => id !== item.id)
-                              );
-                            }}
-                            className="w-4 h-4"
-                          />
-                          <div className="flex-1">
-                            <p className="font-medium">{item.name}</p>
-                            <p className="text-sm text-muted-foreground">{formatCurrency(item.price)}</p>
-                          </div>
-                        </label>
-                      );
-                    })}
+                  {addons.map((a) => (
+                    <div
+                      key={a.id}
+                      className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border hover:bg-secondary/50"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{a.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {formatCurrency(a.price)}
+                          {a.category && <span> • {a.category}</span>}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => toggleAddonAvailable(a)}
+                        className="text-xs px-2 py-1 rounded-md"
+                        title="Toggle availability"
+                      >
+                        {a.isAvailable ? (
+                          <span className="text-success flex items-center gap-1"><ToggleRight className="w-5 h-5" /> Available</span>
+                        ) : (
+                          <span className="text-muted-foreground flex items-center gap-1"><ToggleLeft className="w-5 h-5" /> Off</span>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => handleEditAddon(a)}
+                        className="p-2 hover:bg-muted rounded-lg"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAddon(a.id)}
+                        className="p-2 hover:bg-destructive/10 rounded-lg"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4 text-destructive" />
+                      </button>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
 
-            <div className="flex justify-between gap-2 p-6 border-t border-border">
-              {addonStep === 'select-addons' ? (
-                <button
-                  onClick={() => { setAddonStep('select-product'); setAddonSearch(''); }}
-                  className="pos-btn-secondary px-4 py-2 flex items-center gap-2"
-                >
-                  <ArrowLeft className="w-4 h-4" /> Back
-                </button>
-              ) : <div />}
-              <div className="flex gap-2">
-                <button onClick={() => setShowAddAddons(false)} className="pos-btn-secondary px-4 py-2">
-                  Cancel
-                </button>
-                {addonStep === 'select-addons' && (
-                  <button onClick={saveAddons} className="pos-btn-primary px-4 py-2">
-                    Save Addons ({addonSelections.length})
-                  </button>
-                )}
-              </div>
+            <div className="flex justify-end gap-2 p-6 border-t border-border">
+              <button onClick={() => setShowAddonsManager(false)} className="pos-btn-secondary px-4 py-2">
+                Close
+              </button>
             </div>
           </div>
         </div>
       )}
+
+
 
 
       {showAddCategory && (
