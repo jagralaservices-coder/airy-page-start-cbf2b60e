@@ -530,7 +530,7 @@ export const POSBillingPage: React.FC = () => {
             customerName: customer.name,
             customerPhone: customer.phone,
             customerEmail: customer.email,
-            customerAddress: [customer.address, customer.city, customer.state, customer.pincode].filter(Boolean).join(', '),
+            customerAddress: customer.address,
           });
           const kotContent = generateKOT(order);
 
