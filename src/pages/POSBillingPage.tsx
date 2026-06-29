@@ -254,10 +254,7 @@ export const POSBillingPage: React.FC = () => {
       return;
     }
 
-    if (item.id.startsWith('addons-')) {
-      setShowAddonSheet(true);
-      return;
-    }
+    // (Addons are added per cart item via the "+ Addons" button next to qty controls)
 
     if (!item.isAvailable) return;
     
