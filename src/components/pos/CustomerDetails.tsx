@@ -37,8 +37,7 @@ const getStoredCustomers = (): CustomerData[] => {
     const stored = localStorage.getItem('pos_customers');
     if (!stored) return [];
     return JSON.parse(stored).map((c: any) => ({
-      name: c.name || '', phone: c.phone || '', email: c.email || '',
-      address: c.address || '', city: c.city || '', state: c.state || '', pincode: c.pincode || '',
+      name: c.name || '', phone: c.phone || '', email: c.email || '', address: c.address || '',
     }));
   } catch { return []; }
 };
