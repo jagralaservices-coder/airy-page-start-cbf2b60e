@@ -1634,49 +1634,115 @@ export const POSBillingPage: React.FC = () => {
               {t('pos.emptyCart')}
             </div>
           ) : (
-            cart.map((item, index) => {
-              const isHighlighted = activeSection === 'cart' && cartHighlightIndex === index;
-              return (
-                <div
-                  key={item.cartItemId || item.id}
-                  data-cart-index={index}
-                  className={cn(
-                    "cart-item flex items-center gap-2 rounded-lg border bg-card p-2 text-foreground transition-all duration-200",
-                    isHighlighted ? "border-primary ring-2 ring-primary/40 bg-primary/5 scale-[1.01]" : "border-border"
-                  )}
-                >
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-xs leading-tight break-words text-foreground">{item.name}</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    {formatCurrency(item.price)} × {item.quantity}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => updateCartQuantity(item.cartItemId || item.id, item.quantity - 1)}
-                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-foreground hover:bg-muted"
-                  >
-                    <Minus className="w-3 h-3" />
-                  </button>
-                  <span className="w-5 text-center text-xs font-medium text-foreground">{item.quantity}</span>
-                  <button
-                    onClick={() => updateCartQuantity(item.cartItemId || item.id, item.quantity + 1)}
-                    className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-foreground hover:bg-muted"
-                  >
-                    <Plus className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => removeFromCart(item.cartItemId || item.id)}
-                    className="ml-1 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-destructive hover:bg-muted"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-              );
-            })
+            (() => {
+              // group addons under their parent cart item
+              const addonsByParent: Record<string, CartItem[]> = {};
+              const topLevel: CartItem[] = [];
+              cart.forEach((it) => {
+                const p = getAddonParentKey(it);
+                if (p) {
+                  (addonsByParent[p] ||= []).push(it);
+                } else {
+                  topLevel.push(it);
+                }
+              });
+              return topLevel.map((item, index) => {
+                const isHighlighted = activeSection === 'cart' && cartHighlightIndex === index;
+                const parentKey = item.cartItemId || item.id;
+                const childAddons = addonsByParent[parentKey] || [];
+                return (
+                  <div key={parentKey} className="space-y-1">
+                    <div
+                      data-cart-index={index}
+                      className={cn(
+                        "cart-item flex items-center gap-2 rounded-lg border bg-card p-2 text-foreground transition-all duration-200",
+                        isHighlighted ? "border-primary ring-2 ring-primary/40 bg-primary/5 scale-[1.01]" : "border-border"
+                      )}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-xs leading-tight break-words text-foreground">{item.name}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {formatCurrency(item.price)} × {item.quantity}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => updateCartQuantity(parentKey, item.quantity - 1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-foreground hover:bg-muted"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="w-5 text-center text-xs font-medium text-foreground">{item.quantity}</span>
+                        <button
+                          onClick={() => updateCartQuantity(parentKey, item.quantity + 1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-foreground hover:bg-muted"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => setAddonParentForSheet(item)}
+                          title="Add addons"
+                          className="ml-1 flex h-8 items-center justify-center gap-1 rounded-md border border-primary/40 bg-primary/5 px-2 text-[10px] font-semibold text-primary hover:bg-primary/10"
+                        >
+                          <Plus className="w-3 h-3" /> Addons
+                        </button>
+                        <button
+                          onClick={() => removeFromCart(parentKey)}
+                          className="ml-1 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-destructive hover:bg-muted"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {childAddons.length > 0 && (
+                      <div className="ml-4 space-y-1 border-l-2 border-primary/20 pl-2">
+                        {childAddons.map((addon) => {
+                          const addonKey = addon.cartItemId || addon.id;
+                          return (
+                            <div
+                              key={addonKey}
+                              className="flex items-center gap-2 rounded-md border border-dashed border-border bg-muted/30 p-1.5"
+                            >
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[11px] font-medium leading-tight break-words text-foreground">{addon.name}</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {formatCurrency(addon.price)} × {addon.quantity}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => updateCartQuantity(addonKey, addon.quantity - 1)}
+                                  className="flex h-6 w-6 items-center justify-center rounded border border-border bg-background hover:bg-muted"
+                                >
+                                  <Minus className="w-2.5 h-2.5" />
+                                </button>
+                                <span className="w-4 text-center text-[11px] font-medium">{addon.quantity}</span>
+                                <button
+                                  onClick={() => updateCartQuantity(addonKey, addon.quantity + 1)}
+                                  className="flex h-6 w-6 items-center justify-center rounded border border-border bg-background hover:bg-muted"
+                                >
+                                  <Plus className="w-2.5 h-2.5" />
+                                </button>
+                                <button
+                                  onClick={() => removeFromCart(addonKey)}
+                                  className="ml-0.5 flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-destructive hover:bg-muted"
+                                >
+                                  <Trash2 className="w-2.5 h-2.5" />
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              });
+            })()
           )}
         </div>
+
 
         <div className="border-t border-border bg-card">
         {/* Billing Summary Swipe Up */}
