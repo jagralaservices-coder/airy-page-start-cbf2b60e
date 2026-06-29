@@ -496,6 +496,20 @@ export const POSBillingPage: React.FC = () => {
       }
     }
 
+    if (currentOrderType === 'delivery') {
+      if (!customer.name.trim() || !customer.phone.trim() || !customer.address.trim()) {
+        toast({
+          title: 'Delivery Details Required',
+          description: 'Customer Name, Phone Number and Address are mandatory for delivery bills.',
+          variant: 'destructive'
+        });
+        existingPrintWindow?.close();
+        setShowCustomerDetails(true);
+        return;
+      }
+    }
+
+
     setIsProcessingSale(true);
     try {
       const accessBreakdown = paymentToUse === 'access' && accessSubMethodRef.current
