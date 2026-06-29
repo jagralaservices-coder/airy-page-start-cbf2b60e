@@ -2264,6 +2264,14 @@ export const POSBillingPage: React.FC = () => {
                 };
                 const isActionBtn = ['print', 'kot', 'kotPrint'].includes(btn.id);
                 const isHighlighted = activeSection === 'actions' && actionHighlightIndex === idx;
+                const colorMap: Record<string, { bg: string; ring: string; ringColor: string }> = {
+                  print: { bg: 'bg-success text-success-foreground border-success hover:bg-success/90', ring: 'ring-success-foreground/60', ringColor: 'ring-success' },
+                  kot: { bg: 'bg-info text-info-foreground border-info hover:bg-info/90', ring: 'ring-info-foreground/60', ringColor: 'ring-info' },
+                  kotPrint: { bg: 'bg-accent text-accent-foreground border-accent hover:bg-accent/90', ring: 'ring-accent-foreground/60', ringColor: 'ring-accent' },
+                  hold: { bg: 'bg-warning text-warning-foreground border-warning hover:bg-warning/90', ring: 'ring-warning-foreground/60', ringColor: 'ring-warning' },
+                  split: { bg: 'bg-destructive text-destructive-foreground border-destructive hover:bg-destructive/90', ring: 'ring-destructive-foreground/60', ringColor: 'ring-destructive' },
+                };
+                const colors = colorMap[btn.id] || { bg: 'bg-primary text-primary-foreground border-primary hover:bg-primary/90', ring: 'ring-primary-foreground/60', ringColor: 'ring-primary' };
                 return (
                   <Button
                     variant="default"
@@ -2271,8 +2279,9 @@ export const POSBillingPage: React.FC = () => {
                     onClick={buttonActions[btn.id] || (() => {})}
                     disabled={cart.length === 0 || isProcessingSale}
                     className={cn(
-                      "h-9 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl bg-primary text-primary-foreground border border-primary hover:bg-primary/90",
-                      isHighlighted && "ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background scale-[1.02]"
+                      "h-9 w-full gap-2 px-3 text-xs md:text-sm font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] rounded-xl",
+                      colors.bg,
+                      isHighlighted && `ring-2 ${colors.ring} ring-offset-2 ring-offset-background scale-[1.02]`
                     )}
                   >
                     {iconMap[btn.id]}
