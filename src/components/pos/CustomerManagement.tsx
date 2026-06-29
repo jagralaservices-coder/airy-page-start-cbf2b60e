@@ -31,7 +31,7 @@ export const CustomerManagement: React.FC = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState({ name: '', phone: '', address: '', city: '', state: '', pincode: '', email: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', address: '', email: '' });
 
   useEffect(() => {
     fetchCustomers();
@@ -48,7 +48,7 @@ export const CustomerManagement: React.FC = () => {
       if (!error && data?.items) {
         const mapped = data.items.map((c: any) => ({
           id: c.id, name: c.name, phone: c.phone || '', email: c.email || '',
-          address: c.address || '', city: c.city || '', state: c.state || '', pincode: c.pincode || '',
+          address: c.address || '',
           createdAt: c.created_at,
         }));
         setCustomers(mapped);
@@ -144,9 +144,6 @@ export const CustomerManagement: React.FC = () => {
         phone: formData.phone.trim(), 
         address: formData.address.trim() || undefined, 
         email: formData.email.trim() || undefined, 
-        city: formData.city || undefined, 
-        state: formData.state || undefined, 
-        pincode: formData.pincode || undefined,
         createdAt: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
         pendingSync: true
@@ -223,7 +220,7 @@ export const CustomerManagement: React.FC = () => {
 
   const openAddDialog = () => {
     setEditingCustomer(null);
-    setFormData({ name: '', phone: '', address: '', city: '', state: '', pincode: '', email: '' });
+    setFormData({ name: '', phone: '', address: '', email: '' });
     setShowAddDialog(true);
   };
 
@@ -289,11 +286,6 @@ export const CustomerManagement: React.FC = () => {
             <div><label className="text-sm font-medium mb-1.5 block">{t('common.phone')} *</label><Input placeholder={t('common.phone')} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} /></div>
             <div><label className="text-sm font-medium mb-1.5 block">{t('common.email')}</label><Input type="email" placeholder={t('common.email') + ' (' + t('common.optional') + ')'} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} /></div>
             <div><label className="text-sm font-medium mb-1.5 block">{t('common.address')}</label><Input placeholder={t('common.address') + ' (' + t('common.optional') + ')'} value={formData.address} onChange={(e) => setFormData({ ...formData, address: e.target.value })} /></div>
-            <div className="grid grid-cols-3 gap-2">
-              <div><label className="text-xs font-medium mb-1 block">{t('customers.city') || 'City'}</label><Input placeholder={t('customers.city') || 'City'} value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} /></div>
-              <div><label className="text-xs font-medium mb-1 block">{t('customers.state') || 'State'}</label><Input placeholder={t('customers.state') || 'State'} value={formData.state} onChange={(e) => setFormData({ ...formData, state: e.target.value })} /></div>
-              <div><label className="text-xs font-medium mb-1 block">{t('customers.pincode') || 'Pincode'}</label><Input placeholder={t('customers.pincode') || 'Pincode'} value={formData.pincode} onChange={(e) => setFormData({ ...formData, pincode: e.target.value })} /></div>
-            </div>
             <div className="flex gap-2 pt-2">
               <Button variant="outline" className="flex-1" onClick={() => setShowAddDialog(false)}>{t('common.cancel')}</Button>
               <Button className="flex-1" onClick={handleAddCustomer}>{editingCustomer ? t('common.update') : t('customers.addCustomer')}</Button>
