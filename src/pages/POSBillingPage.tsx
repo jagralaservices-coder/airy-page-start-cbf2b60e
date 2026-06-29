@@ -1373,7 +1373,29 @@ export const POSBillingPage: React.FC = () => {
                 {type.label}
               </button>
             ))}
-            
+
+            {canAccess('tableManagement') && currentOrderType === 'dine-in' && (
+              <div className="flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+                <Select value={selectedTableId || ''} onValueChange={handleTableChange}>
+                  <SelectTrigger className="h-8 min-w-[110px] w-auto text-xs px-2">
+                    <SelectValue placeholder={t('tables.selectTable')} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover">
+                    {tables.map(table => (
+                      <SelectItem
+                        key={table.id}
+                        value={table.id}
+                        disabled={table.status === 'occupied' && table.id !== selectedTableId}
+                      >
+                        {t('common.table')} {table.number} ({table.capacity} {t('common.seats')}) - {table.status}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             {selectedTable && (
               <div className="ml-auto px-3 py-2 bg-success/10 text-success rounded-lg text-sm font-medium">
                 {t('common.table')} {selectedTable.number}
