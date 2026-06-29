@@ -315,15 +315,6 @@ export const MenuManagement: React.FC = () => {
                 ))}
                 <option value="add_new_category">+ Add Category</option>
               </select>
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="number"
-                  placeholder="Stock Count (leave empty for unlimited)"
-                  value={newItem.stock}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, stock: e.target.value }))}
-                />
-              </div>
               
               {/* SKU/Barcode Field */}
               <div className="flex items-center gap-2">
