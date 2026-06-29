@@ -478,11 +478,6 @@ export const MobileMenuManagement: React.FC = () => {
               <option value="add_new_category">+ Add Category</option>
             </select>
             
-            {/* Stock */}
-            <div className="flex items-center gap-2">
-              <Package className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-              <Input type="number" placeholder="Stock (empty = unlimited)" value={newItem.stock} onChange={(e) => setNewItem(prev => ({ ...prev, stock: e.target.value }))} className="h-12 text-base" />
-            </div>
 
             {/* SKU */}
             <div className="flex items-center gap-2">
