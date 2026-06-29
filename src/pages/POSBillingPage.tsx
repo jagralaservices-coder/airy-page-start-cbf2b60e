@@ -1660,10 +1660,32 @@ export const POSBillingPage: React.FC = () => {
                       )}
                     >
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs leading-tight break-words text-foreground">{item.name}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {formatCurrency(item.price)} × {item.quantity}
+                        <p className="font-medium text-xs leading-tight break-words text-foreground">
+                          <span>{item.name}</span>
+                          <span className="ml-2 text-[11px] font-normal text-muted-foreground">
+                            {formatCurrency(item.price)} × {item.quantity}
+                          </span>
                         </p>
+                        {childAddons.length > 0 && (
+                          <div className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] leading-tight text-muted-foreground">
+                            {childAddons.map((addon) => {
+                              const addonKey = addon.cartItemId || addon.id;
+                              const displayName = (addon.name || '').replace(/^\+\s*/, '');
+                              return (
+                                <span key={addonKey} className="inline-flex items-center gap-1">
+                                  <span>+ {displayName} {formatCurrency(addon.price)} ×{addon.quantity}</span>
+                                  <button
+                                    onClick={() => removeFromCart(addonKey)}
+                                    className="text-destructive hover:text-destructive/80"
+                                    title="Remove addon"
+                                  >
+                                    ✕
+                                  </button>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-1">
                         <button
@@ -1695,47 +1717,6 @@ export const POSBillingPage: React.FC = () => {
                       </div>
                     </div>
 
-                    {childAddons.length > 0 && (
-                      <div className="ml-4 space-y-1 border-l-2 border-primary/20 pl-2">
-                        {childAddons.map((addon) => {
-                          const addonKey = addon.cartItemId || addon.id;
-                          return (
-                            <div
-                              key={addonKey}
-                              className="flex items-center gap-2 rounded-md border border-dashed border-border bg-muted/30 p-1.5"
-                            >
-                              <div className="flex-1 min-w-0">
-                                <p className="text-[11px] font-medium leading-tight break-words text-foreground">{addon.name}</p>
-                                <p className="text-[10px] text-muted-foreground">
-                                  {formatCurrency(addon.price)} × {addon.quantity}
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <button
-                                  onClick={() => updateCartQuantity(addonKey, addon.quantity - 1)}
-                                  className="flex h-6 w-6 items-center justify-center rounded border border-border bg-background hover:bg-muted"
-                                >
-                                  <Minus className="w-2.5 h-2.5" />
-                                </button>
-                                <span className="w-4 text-center text-[11px] font-medium">{addon.quantity}</span>
-                                <button
-                                  onClick={() => updateCartQuantity(addonKey, addon.quantity + 1)}
-                                  className="flex h-6 w-6 items-center justify-center rounded border border-border bg-background hover:bg-muted"
-                                >
-                                  <Plus className="w-2.5 h-2.5" />
-                                </button>
-                                <button
-                                  onClick={() => removeFromCart(addonKey)}
-                                  className="ml-0.5 flex h-6 w-6 items-center justify-center rounded border border-border bg-background text-destructive hover:bg-muted"
-                                >
-                                  <Trash2 className="w-2.5 h-2.5" />
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
                   </div>
                 );
               });
