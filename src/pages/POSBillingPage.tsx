@@ -70,6 +70,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+
 import { CustomerDetails } from '@/components/pos/CustomerDetails';
 import { autoShareBillAfterPrint } from '@/lib/billShareUtils';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
