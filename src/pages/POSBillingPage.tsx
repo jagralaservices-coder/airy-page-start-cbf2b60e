@@ -1477,13 +1477,13 @@ export const POSBillingPage: React.FC = () => {
       </div>
 
       {/* Right Panel - Cart & Billing */}
-      <div id="right-billing-panel" className="w-[clamp(340px,40vw,600px)] flex-shrink-0 overflow-hidden border-l border-border bg-card flex flex-col">
+      <div id="right-billing-panel" className="w-[clamp(360px,42vw,600px)] flex-shrink-0 overflow-hidden border-l border-border bg-card flex flex-col">
         {/* Cart Header with Table Select */}
-        <div className="p-1 border-b border-border space-y-1">
-          <div className="flex items-center justify-between gap-1">
+        <div className="p-1 pr-2 border-b border-border space-y-1">
+          <div className="flex items-center justify-between gap-2 min-w-0">
             <h2 className="font-semibold text-sm whitespace-nowrap">{t('common.currentOrder')}</h2>
             <TooltipProvider delayDuration={300}>
-               <div id="cart-header-actions" className="flex items-center gap-1 flex-nowrap">
+               <div id="cart-header-actions" className="ml-auto flex min-w-0 items-center gap-1 flex-nowrap">
                 {isButtonVisible('customer') && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -1541,7 +1541,7 @@ export const POSBillingPage: React.FC = () => {
                     <Button
                       variant="default"
                       size="icon"
-                      className={cn("h-14 w-14 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90", editMode.isEditMode && "animate-pulse")}
+                      className={cn("h-10 w-10 xl:h-14 xl:w-14 flex-shrink-0 bg-primary text-primary-foreground hover:bg-primary/90", editMode.isEditMode && "animate-pulse")}
                       onClick={() => {
                         if (editMode.isEditMode) {
                           editMode.exitEditMode();
