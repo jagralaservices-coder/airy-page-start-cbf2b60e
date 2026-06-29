@@ -140,6 +140,8 @@ export const POSBillingPage: React.FC = () => {
     heldBills,
     recallBill,
     mergeBills,
+    updateTableStatus,
+
   } = usePOS();
 
   const [searchQuery, setSearchQuery] = useState(() => {
