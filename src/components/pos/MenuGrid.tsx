@@ -277,6 +277,20 @@ export const MenuGrid = forwardRef<HTMLDivElement>((_, ref) => {
             <span className="text-[10px] font-bold text-primary leading-tight text-center">+ Others</span>
           </button>
 
+          {/* Addons Button */}
+          {hasAnyAvailableAddons() && (
+            <button
+              onClick={() => {
+                setAddonParentName('Addons');
+                setAddonSheetOpen(true);
+              }}
+              className="rounded-xl border-2 border-dashed border-primary/30 hover:border-primary bg-card p-2 flex flex-col items-center justify-center gap-1 transition-all hover:shadow-md active:scale-95 min-h-[80px]"
+            >
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="text-[10px] font-bold text-primary leading-tight text-center">+ Addons</span>
+            </button>
+          )}
+
           {filteredItems.map((item) => (
             <button
               key={item.id}
