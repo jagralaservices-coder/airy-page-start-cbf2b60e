@@ -235,6 +235,7 @@ interface POSContextType {
   holdBill: () => void;
   recallBill: (billId: string) => void;
   deleteHeldBill: (billId: string) => void;
+  mergeBills: (billIds: string[]) => void;
 
   // Tables
   tables: Table[];
@@ -2279,6 +2280,39 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setHeldBills(newHeldBills);
   };
 
+  const mergeBills = (billIds: string[]) => {
+    if (billIds.length < 2) return;
+    const billsToMerge = heldBills.filter((b) => billIds.includes(b.id));
+    if (billsToMerge.length < 2) return;
+
+    // Combine all items and ensure unique cartItemIds to avoid key collisions
+    const mergedItems: CartItem[] = [];
+    billsToMerge.forEach((bill) => {
+      bill.items.forEach((item) => {
+        mergedItems.push({
+          ...item,
+          cartItemId: generateId(),
+        });
+      });
+    });
+
+    // Use table from first bill if current cart is empty and no table selected
+    const firstBillWithTable = billsToMerge.find((b) => b.tableNumber);
+    if (cart.length === 0 && firstBillWithTable) {
+      const table = tables.find((t) => t.number === firstBillWithTable.tableNumber);
+      if (table) setSelectedTable(table);
+    }
+
+    setCart((prev) => [...prev, ...mergedItems]);
+
+    // Remove merged held bills
+    const newHeldBills = heldBills.filter((b) => !billIds.includes(b.id));
+    setHeldBillsState(newHeldBills);
+    setHeldBills(newHeldBills);
+
+    toast.success(`Merged ${billsToMerge.length} bills into current order`);
+  };
+
   const updateTableStatus = (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed') => {
     const newTables = tables.map((t) => (t.id === tableId ? { ...t, status } : t));
     setTablesState(newTables);
@@ -2646,6 +2680,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         holdBill,
         recallBill,
         deleteHeldBill,
+        mergeBills,
         tables,
         updateTableStatus,
         printKOT,

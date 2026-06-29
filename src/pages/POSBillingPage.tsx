@@ -127,6 +127,7 @@ export const POSBillingPage: React.FC = () => {
     holdBill,
     heldBills,
     recallBill,
+    mergeBills,
   } = usePOS();
 
   const [searchQuery, setSearchQuery] = useState(() => {
@@ -135,6 +136,7 @@ export const POSBillingPage: React.FC = () => {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [showHeldBills, setShowHeldBills] = useState(false);
   const [showQROrders, setShowQROrders] = useState(false);
+  const [selectedHeldBillIds, setSelectedHeldBillIds] = useState<string[]>([]);
 
   const [selectedPayment, setSelectedPayment] = useState<'cash' | 'card' | 'upi' | 'due' | 'part' | 'wallet' | 'credit' | 'access' | null>(() => {
     return (localStorage.getItem('pos_billing_selected_payment') as any) || null;
@@ -1618,7 +1620,12 @@ export const POSBillingPage: React.FC = () => {
                       variant="default"
                       size="icon"
                       className="h-10 w-10 xl:h-14 xl:w-14 flex-shrink-0 relative bg-primary text-primary-foreground hover:bg-primary/90"
-                      onClick={() => setShowHeldBills(!showHeldBills)}
+                      onClick={() => {
+                        if (showHeldBills) {
+                          setSelectedHeldBillIds([]);
+                        }
+                        setShowHeldBills(!showHeldBills);
+                      }}
                     >
                       <Play className="w-5 h-5 xl:w-[26px] xl:h-[26px]" />
                       {heldBills.length > 0 && (
@@ -1698,22 +1705,61 @@ export const POSBillingPage: React.FC = () => {
         {/* Held Bills Dropdown */}
         {showHeldBills && heldBills.length > 0 && (
           <div className="p-3 bg-secondary/50 border-b border-border space-y-2">
-            <p className="text-xs font-medium text-muted-foreground">{t('common.heldBills').toUpperCase()}</p>
-            {heldBills.map(bill => (
-              <button
-                key={bill.id}
-                onClick={() => {
-                  recallBill(bill.id);
-                  setShowHeldBills(false);
-                }}
-                className="w-full text-left p-2 bg-card rounded-lg border border-border hover:border-primary transition-colors"
-              >
-                <div className="flex justify-between text-sm">
-                  <span>{bill.tableNumber ? `${t('common.table')} ${bill.tableNumber}` : t('pos.takeaway')}</span>
-                  <span className="font-medium">{bill.items.length} {t('common.items')}</span>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground">{t('common.heldBills').toUpperCase()}</p>
+              {selectedHeldBillIds.length >= 2 && (
+                <Button
+                  size="sm"
+                  className="h-7 text-[10px] px-2 bg-primary text-primary-foreground hover:bg-primary/90"
+                  onClick={() => {
+                    mergeBills(selectedHeldBillIds);
+                    setSelectedHeldBillIds([]);
+                    setShowHeldBills(false);
+                  }}
+                >
+                  {t('common.mergeSelected')}
+                </Button>
+              )}
+            </div>
+            <p className="text-[10px] text-muted-foreground">{t('common.selectBillsToMerge')}</p>
+            {heldBills.map(bill => {
+              const isSelected = selectedHeldBillIds.includes(bill.id);
+              return (
+                <div
+                  key={bill.id}
+                  className={cn(
+                    "flex items-center gap-2 w-full text-left p-2 bg-card rounded-lg border transition-colors",
+                    isSelected ? "border-primary bg-primary/5" : "border-border hover:border-primary"
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={(e) => {
+                      setSelectedHeldBillIds(prev =>
+                        e.target.checked
+                          ? [...prev, bill.id]
+                          : prev.filter(id => id !== bill.id)
+                      );
+                    }}
+                    className="w-4 h-4 rounded border-border accent-primary"
+                  />
+                  <button
+                    onClick={() => {
+                      recallBill(bill.id);
+                      setShowHeldBills(false);
+                      setSelectedHeldBillIds([]);
+                    }}
+                    className="flex-1 text-left"
+                  >
+                    <div className="flex justify-between text-sm">
+                      <span>{bill.tableNumber ? `${t('common.table')} ${bill.tableNumber}` : t('pos.takeaway')}</span>
+                      <span className="font-medium">{bill.items.length} {t('common.items')}</span>
+                    </div>
+                  </button>
                 </div>
-              </button>
-            ))}
+              );
+            })}
           </div>
         )}
 
