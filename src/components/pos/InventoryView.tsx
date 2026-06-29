@@ -20,8 +20,13 @@ import {
   X,
   Settings2,
   Link,
-  Upload
+  Upload,
+  History,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Factory
 } from 'lucide-react';
+import { logInventoryHistory, getInventoryHistory, InventoryHistoryEntry } from '@/lib/inventoryHistory';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,7 +51,7 @@ import { InventoryComponentsDialog } from './InventoryComponentsDialog';
 import { BulkInventoryUpload } from './BulkInventoryUpload';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type ViewType = 'main' | 'purchaseManagement' | 'requestForPurchase' | 'wastage' | 'addWastage' | 'convertRawMaterial' | 'currentStock' | 'openingClosing' | 'indentManagement' | 'productionExecution' | 'bulkUpload' | 'smartInventory';
+type ViewType = 'main' | 'purchaseManagement' | 'requestForPurchase' | 'wastage' | 'addWastage' | 'convertRawMaterial' | 'currentStock' | 'openingClosing' | 'indentManagement' | 'productionExecution' | 'bulkUpload' | 'smartInventory' | 'inventoryHistory';
 
 interface InventoryMenuSection {
   title: string;
@@ -157,6 +162,13 @@ export const InventoryView: React.FC = () => {
           title: 'Indent Management',
           description: 'Calculate the raw materials required to prepare specific items in bulk.',
           color: 'bg-yellow-50 text-yellow-600'
+        },
+        {
+          id: 'inventoryHistory',
+          icon: History,
+          title: 'Inventory History',
+          description: 'Track every purchase, every consumption, and every auto-production of raw materials.',
+          color: 'bg-indigo-50 text-indigo-600'
         }
       ]
     });
@@ -198,6 +210,9 @@ export const InventoryView: React.FC = () => {
   if (activeView === 'smartInventory') {
     navigate('/smart-inventory');
     return null;
+  }
+  if (activeView === 'inventoryHistory') {
+    return <InventoryHistoryView onBack={() => setActiveView('main')} inventory={inventory} />;
   }
 
   return (
@@ -346,6 +361,22 @@ const PurchaseManagementView: React.FC<{ onBack: () => void }> = ({ onBack }) =>
       }
     }
 
+    // Log purchase history (always, even if no expense)
+    if (parseFloat(formData.quantity) > 0) {
+      const targetId = existingItem ? existingItem.id : (inventory[0]?.id || formData.name);
+      logInventoryHistory({
+        type: 'purchase',
+        inventoryId: existingItem ? existingItem.id : targetId,
+        inventoryName: formData.name,
+        quantity: quantityInBase,
+        unit: baseUnit,
+        costPerUnit: costPerUnit,
+        totalCost: costPerUnit > 0 ? parseFloat(formData.quantity) * costPerUnit : undefined,
+        costUnit: formData.costUnit,
+        source: existingItem ? 'Stock added' : 'New inventory item',
+      });
+    }
+
     setFormData({ name: '', quantity: '', unit: 'kg', costPerUnit: '', costUnit: 'kg', minStock: '10', isManufactured: false });
     setShowAddDialog(false);
   };
@@ -426,6 +457,24 @@ const PurchaseManagementView: React.FC<{ onBack: () => void }> = ({ onBack }) =>
     setInventory(updatedInventory);
     setLocalInventory(updatedInventory);
     toast.success(`"${formData.name}" updated`);
+
+    // Log purchase history if stock was increased via edit
+    {
+      const deltaInBase = quantityInBase - editingItem.quantity;
+      if (deltaInBase > 0) {
+        logInventoryHistory({
+          type: 'purchase',
+          inventoryId: editingItem.id,
+          inventoryName: formData.name,
+          quantity: deltaInBase,
+          unit: baseUnit,
+          costPerUnit: costPerUnit,
+          totalCost: costPerUnit > 0 ? deltaInBase * costPerUnit : undefined,
+          costUnit: formData.costUnit,
+          source: 'Stock adjustment (edit)',
+        });
+      }
+    }
 
     setFormData({ name: '', quantity: '', unit: 'kg', costPerUnit: '', costUnit: 'kg', minStock: '10', isManufactured: false });
     setEditingItem(null);
@@ -1430,3 +1479,143 @@ const EmptyState: React.FC<{ message: string }> = ({ message }) => (
     </div>
   </div>
 );
+
+// ============================================================
+// Inventory History View — Purchases + Usage + Auto-Production
+// ============================================================
+const InventoryHistoryView: React.FC<{ onBack: () => void; inventory: InventoryItem[] }> = ({ onBack, inventory }) => {
+  const [tab, setTab] = useState<'purchase' | 'usage' | 'production'>('purchase');
+  const [search, setSearch] = useState('');
+  const [entries, setEntries] = useState<InventoryHistoryEntry[]>(() => getInventoryHistory());
+
+  // Refresh on tab switch (cheap; localStorage read)
+  React.useEffect(() => {
+    setEntries(getInventoryHistory());
+  }, [tab]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return entries
+      .filter(e => e.type === tab)
+      .filter(e => !q || e.inventoryName.toLowerCase().includes(q) || (e.menuItemName || '').toLowerCase().includes(q) || (e.billNumber || '').toLowerCase().includes(q));
+  }, [entries, tab, search]);
+
+  const totalPurchaseValue = useMemo(
+    () => entries.filter(e => e.type === 'purchase').reduce((s, e) => s + (e.totalCost || 0), 0),
+    [entries]
+  );
+
+  const tabBtn = (id: typeof tab, label: string, icon: React.ReactNode, count: number) => (
+    <button
+      onClick={() => setTab(id)}
+      className={`flex-1 flex items-center justify-center gap-2 py-3 px-2 text-sm font-semibold border-b-2 transition-colors ${
+        tab === id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+      <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full">{count}</span>
+    </button>
+  );
+
+  const counts = useMemo(() => ({
+    purchase: entries.filter(e => e.type === 'purchase').length,
+    usage: entries.filter(e => e.type === 'usage').length,
+    production: entries.filter(e => e.type === 'production').length,
+  }), [entries]);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border/50">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={onBack}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1">
+            <h1 className="text-lg font-bold text-foreground">📜 Inventory History</h1>
+            <p className="text-xs text-muted-foreground">
+              {counts.purchase + counts.usage + counts.production} total entries · Purchase value tracked: {formatCurrency(totalPurchaseValue)}
+            </p>
+          </div>
+        </div>
+        <div className="flex border-b">
+          {tabBtn('purchase', 'Purchases', <ArrowDownCircle className="w-4 h-4" />, counts.purchase)}
+          {tabBtn('usage', 'Usage', <ArrowUpCircle className="w-4 h-4" />, counts.usage)}
+          {tabBtn('production', 'Produced', <Factory className="w-4 h-4" />, counts.production)}
+        </div>
+        <div className="px-4 py-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={tab === 'usage' ? 'Search by ingredient, dish, or bill no…' : 'Search by ingredient name…'}
+              className="pl-9"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 py-3 pb-24 space-y-2">
+        {filtered.length === 0 && (
+          <EmptyState message={`No ${tab} entries yet. They will appear here automatically as you ${tab === 'purchase' ? 'add stock' : tab === 'usage' ? 'complete bills' : 'auto-produce items'}.`} />
+        )}
+
+        {filtered.map((e) => (
+          <div key={e.id} className="bg-card border border-border/60 rounded-2xl p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-semibold text-sm text-foreground truncate">{e.inventoryName}</h3>
+                  {e.type === 'purchase' && (
+                    <span className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-semibold">+ IN</span>
+                  )}
+                  {e.type === 'usage' && (
+                    <span className="text-[10px] bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full font-semibold">- OUT</span>
+                  )}
+                  {e.type === 'production' && (
+                    <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full font-semibold">PRODUCED</span>
+                  )}
+                </div>
+
+                {e.type === 'usage' && e.menuItemName && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Used for <span className="font-medium text-foreground">{e.menuItemName}</span>
+                    {e.menuItemQuantity ? ` × ${e.menuItemQuantity}` : ''}
+                    {e.billNumber ? ` · Bill ${e.billNumber}` : ''}
+                  </p>
+                )}
+
+                {e.type === 'purchase' && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {e.source || 'Purchase'}
+                    {e.costPerUnit ? ` · ₹${e.costPerUnit}/${e.costUnit || e.unit}` : ''}
+                  </p>
+                )}
+
+                {e.type === 'production' && e.producedFrom && e.producedFrom.length > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    From: {e.producedFrom.map(p => `${formatQuantityDisplay(p.quantity, p.unit)} ${p.name}`).join(', ')}
+                  </p>
+                )}
+
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {new Date(e.createdAt).toLocaleString()}
+                </p>
+              </div>
+
+              <div className="text-right flex-shrink-0">
+                <p className={`font-bold text-base ${e.type === 'purchase' ? 'text-green-600' : e.type === 'usage' ? 'text-orange-600' : 'text-purple-600'}`}>
+                  {e.type === 'usage' ? '-' : '+'}{formatQuantityDisplay(e.quantity, e.unit)}
+                </p>
+                {e.totalCost ? (
+                  <p className="text-xs text-muted-foreground">{formatCurrency(e.totalCost)}</p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

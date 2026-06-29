@@ -69,6 +69,7 @@ import {
 } from '@/lib/store';
 import { triggerDebouncedBackup } from '@/lib/backupUtils';
 import { logSecurityAction } from '@/lib/auditLogger';
+import { logInventoryHistory } from '@/lib/inventoryHistory';
 
 // ===== Phase 2.6 — Credit Ledger helpers =====
 // Resolve (or create) a pos_customers row for a credit/due sale and return its id.
@@ -1452,6 +1453,27 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       
       console.log('[AutoProduce] SUCCESS:', invItem.name, 'produced', quantityProduced, invItem.unit,
         '- Stock:', oldParentQty, '->', currentInventory[invItemIndex].quantity);
+
+      // Log production history
+      try {
+        const producedFrom = itemComponents.map((c: any) => {
+          const child = currentInventory.find(i => i.id === c.childInventoryId);
+          return {
+            name: child?.name || 'Unknown',
+            quantity: convertToBaseUnit(c.quantityRequired, c.unit) * batchesToProduce,
+            unit: child?.unit || c.unit,
+          };
+        });
+        logInventoryHistory({
+          type: 'production',
+          inventoryId: invItem.id,
+          inventoryName: invItem.name,
+          quantity: quantityProduced,
+          unit: invItem.unit,
+          producedFrom,
+          source: 'Auto-production (recipe)',
+        });
+      } catch (err) { console.warn('[AutoProduce] history log failed', err); }
       
       const isPartial = batchesToProduce < batchesNeededIdeal;
       if (isPartial) {
@@ -1576,6 +1598,22 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             '- x Cart qty', cartItem.quantity, '=', totalQtyNeeded);
           
           deductInventoryItem(ingredient.inventoryItemId, totalQtyNeeded);
+
+          // Log usage history
+          if (invItem) {
+            try {
+              logInventoryHistory({
+                type: 'usage',
+                inventoryId: invItem.id,
+                inventoryName: invItem.name,
+                quantity: totalQtyNeeded,
+                unit: invItem.unit,
+                menuItemId: menuItem.id,
+                menuItemName: menuItem.name,
+                menuItemQuantity: cartItem.quantity,
+              });
+            } catch (err) { console.warn('[reduceStock] history log failed', err); }
+          }
         }
       }
       // LEGACY: Single inventory link with gramage
@@ -1583,6 +1621,21 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         console.log('[reduceStock] Using legacy gramage deduction for:', menuItem.name);
         const gramageUsed = menuItem.gramagePerUnit * cartItem.quantity;
         deductInventoryItem(menuItem.linkedInventoryId, gramageUsed);
+        const invItem = currentInventory.find(i => i.id === menuItem.linkedInventoryId);
+        if (invItem) {
+          try {
+            logInventoryHistory({
+              type: 'usage',
+              inventoryId: invItem.id,
+              inventoryName: invItem.name,
+              quantity: gramageUsed,
+              unit: invItem.unit,
+              menuItemId: menuItem.id,
+              menuItemName: menuItem.name,
+              menuItemQuantity: cartItem.quantity,
+            });
+          } catch (err) { console.warn('[reduceStock] history log failed', err); }
+        }
       } else {
         console.log('[reduceStock] No inventory link for:', menuItem.name, '- skipping deduction');
       }
