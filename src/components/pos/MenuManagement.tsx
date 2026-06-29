@@ -514,18 +514,6 @@ export const MenuManagement: React.FC = () => {
         </div>
       )}
 
-      {/* Low Stock Warning */}
-      {lowStockItems.length > 0 && (
-        <div className="bg-warning/10 border border-warning/20 rounded-xl p-4 flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 text-warning" />
-          <div className="flex-1">
-            <p className="font-medium text-foreground">Low Stock Alert</p>
-            <p className="text-sm text-muted-foreground">
-              {lowStockItems.length} items have low stock: {lowStockItems.slice(0, 3).map(i => i.name).join(', ')}
-            </p>
-          </div>
-        </div>
-      )}
 
       <div className="flex justify-between items-center">
         <div>
