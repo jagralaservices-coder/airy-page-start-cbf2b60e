@@ -649,28 +649,6 @@ export const MenuManagement: React.FC = () => {
                         : "Add"}
                     </button>
                   </td>
-                  {hasRecipeAccess && (
-                  <td className="p-4 text-center">
-                    <button
-                      onClick={() => openRecipeDialog(item)}
-                      className={cn(
-                        "px-3 py-1 rounded-full text-sm font-medium inline-flex items-center gap-1 transition-all hover:ring-2 hover:ring-primary/50",
-                        item.ingredients && item.ingredients.length > 0
-                          ? "bg-primary/20 text-primary"
-                          : item.linkedInventoryId
-                            ? "bg-secondary text-muted-foreground"
-                            : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      <UtensilsCrossed className="w-3 h-3" />
-                      {item.ingredients && item.ingredients.length > 0
-                        ? `${item.ingredients.length} items`
-                        : item.linkedInventoryId
-                          ? "1 item"
-                          : "Set"}
-                    </button>
-                  </td>
-                  )}
                   <td className="p-4">
                     <button
                       onClick={() => toggleItemAvailability(item.id)}
