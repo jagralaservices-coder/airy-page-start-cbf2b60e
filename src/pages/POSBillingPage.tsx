@@ -1375,26 +1375,57 @@ export const POSBillingPage: React.FC = () => {
             ))}
 
             {canAccess('tableManagement') && currentOrderType === 'dine-in' && (
-              <div className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
-                <Select value={selectedTableId || ''} onValueChange={handleTableChange}>
-                  <SelectTrigger className="h-8 min-w-[110px] w-auto text-xs px-2">
-                    <SelectValue placeholder={t('tables.selectTable')} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover">
-                    {tables.map(table => (
-                      <SelectItem
-                        key={table.id}
-                        value={table.id}
-                        disabled={table.status === 'occupied' && table.id !== selectedTableId}
-                      >
-                        {t('common.table')} {table.number} ({table.capacity} {t('common.seats')}) - {table.status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 px-2 text-xs gap-1"
+                onClick={() => setShowTableSelector(true)}
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                {selectedTable ? `${t('common.table')} ${selectedTable.number}` : t('tables.selectTable')}
+              </Button>
             )}
+
+            {/* Table selection sheet */}
+            <Sheet open={showTableSelector} onOpenChange={setShowTableSelector}>
+              <SheetContent side="bottom" className="h-[60vh] flex flex-col">
+                <SheetHeader>
+                  <SheetTitle>{t('tables.selectTable')}</SheetTitle>
+                </SheetHeader>
+                <div className="flex-1 overflow-y-auto p-4">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {tables.map(table => {
+                      const isOccupied = table.status === 'occupied' && table.id !== selectedTableId;
+                      const isSelected = table.id === selectedTableId;
+                      return (
+                        <button
+                          key={table.id}
+                          disabled={isOccupied}
+                          onClick={() => {
+                            handleTableChange(table.id);
+                            setShowTableSelector(false);
+                          }}
+                          className={cn(
+                            'p-3 rounded-lg border text-sm font-medium transition-all',
+                            isSelected
+                              ? 'bg-primary text-primary-foreground border-primary'
+                              : isOccupied
+                                ? 'bg-muted text-muted-foreground border-border cursor-not-allowed opacity-60'
+                                : 'bg-card text-card-foreground border-border hover:border-primary hover:bg-primary/5'
+                          )}
+                        >
+                          <div className="flex flex-col items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            <span>{table.number}</span>
+                            <span className="text-[10px] opacity-80">{table.capacity} {t('common.seats')}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
 
             {selectedTable && (
               <div className="ml-auto px-3 py-2 bg-success/10 text-success rounded-lg text-sm font-medium">
