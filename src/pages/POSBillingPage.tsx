@@ -519,7 +519,7 @@ export const POSBillingPage: React.FC = () => {
         name: customer.name,
         phone: customer.phone,
         email: customer.email,
-        address: [customer.address, customer.city, customer.state, customer.pincode].filter(Boolean).join(', '),
+        address: customer.address,
       }, paymentToUse === 'part' ? partPaymentDetails : accessBreakdown);
 
       if (order) {
