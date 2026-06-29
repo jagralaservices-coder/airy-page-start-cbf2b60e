@@ -341,17 +341,16 @@ export const POSBillingPage: React.FC = () => {
   };
 
   const allOrderTypes = [
-    { id: 'dine-in' as const, label: t('pos.dineIn') },
     { id: 'takeaway' as const, label: t('pos.takeaway') },
     { id: 'delivery' as const, label: t('pos.delivery') },
   ];
 
   const orderTypes = allOrderTypes.filter(t => {
-    if (t.id === 'dine-in' && !canAccess('dineIn')) return false;
     if (t.id === 'takeaway' && !canAccess('takeaway')) return false;
     if (t.id === 'delivery' && !canAccess('delivery')) return false;
     return true;
   });
+
 
   // Calculate custom tax
   const calculatedTax = customTax !== null ? customTax : (cartSubtotal * taxPercent / 100);
