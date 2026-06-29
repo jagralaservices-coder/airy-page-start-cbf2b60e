@@ -1577,6 +1577,22 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             '- x Cart qty', cartItem.quantity, '=', totalQtyNeeded);
           
           deductInventoryItem(ingredient.inventoryItemId, totalQtyNeeded);
+
+          // Log usage history
+          if (invItem) {
+            try {
+              logInventoryHistory({
+                type: 'usage',
+                inventoryId: invItem.id,
+                inventoryName: invItem.name,
+                quantity: totalQtyNeeded,
+                unit: invItem.unit,
+                menuItemId: menuItem.id,
+                menuItemName: menuItem.name,
+                menuItemQuantity: cartItem.quantity,
+              });
+            } catch (err) { console.warn('[reduceStock] history log failed', err); }
+          }
         }
       }
       // LEGACY: Single inventory link with gramage
@@ -1584,6 +1600,21 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         console.log('[reduceStock] Using legacy gramage deduction for:', menuItem.name);
         const gramageUsed = menuItem.gramagePerUnit * cartItem.quantity;
         deductInventoryItem(menuItem.linkedInventoryId, gramageUsed);
+        const invItem = currentInventory.find(i => i.id === menuItem.linkedInventoryId);
+        if (invItem) {
+          try {
+            logInventoryHistory({
+              type: 'usage',
+              inventoryId: invItem.id,
+              inventoryName: invItem.name,
+              quantity: gramageUsed,
+              unit: invItem.unit,
+              menuItemId: menuItem.id,
+              menuItemName: menuItem.name,
+              menuItemQuantity: cartItem.quantity,
+            });
+          } catch (err) { console.warn('[reduceStock] history log failed', err); }
+        }
       } else {
         console.log('[reduceStock] No inventory link for:', menuItem.name, '- skipping deduction');
       }
