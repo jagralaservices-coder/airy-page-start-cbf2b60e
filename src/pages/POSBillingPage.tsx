@@ -2000,6 +2000,13 @@ export const POSBillingPage: React.FC = () => {
         categoryId={activeCategory}
       />
 
+      <AddonSelectorSheet
+        isOpen={showAddonSheet}
+        parentName="Bill"
+        onClose={() => setShowAddonSheet(false)}
+        onConfirm={handleAddonsConfirm}
+      />
+
       {/* Variation Selector Sheet */}
       <VariationSelectorSheet
         item={selectedItemForVariation}
