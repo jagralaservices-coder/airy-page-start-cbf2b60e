@@ -348,7 +348,7 @@ export const MobileMenuManagement: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-primary font-bold">{formatCurrency(item.price)}</span>
-                      {displayStock !== undefined && (
+                      {false && displayStock !== undefined && (
                         <span className={cn(
                           'text-xs px-2 py-0.5 rounded-full flex items-center gap-1',
                           displayStock === 0 ? 'bg-destructive/10 text-destructive' :
