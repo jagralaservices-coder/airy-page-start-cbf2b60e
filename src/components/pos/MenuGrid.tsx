@@ -5,6 +5,8 @@ import { MenuItem, MenuItemVariation } from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { Clock, Layers, Plus, Search, X, ChevronRight, PackagePlus } from 'lucide-react';
 import { VariationSelectorSheet } from './VariationSelectorSheet';
+import { AddonSelectorSheet } from './AddonSelectorSheet';
+import { getAddons, Addon } from '@/lib/addons';
 import { PromptPriceWeightDialog } from './PromptPriceWeightDialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -39,6 +41,41 @@ export const MenuGrid = forwardRef<HTMLDivElement>((_, ref) => {
   const [otherUnit, setOtherUnit] = useState('pcs');
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  const [addonSheetOpen, setAddonSheetOpen] = useState(false);
+  const [addonParentName, setAddonParentName] = useState('');
+
+  const hasAnyAvailableAddons = (): boolean => {
+    try {
+      return getAddons().some(a => a.isAvailable);
+    } catch {
+      return false;
+    }
+  };
+
+  const addonToMenuItem = (a: Addon): MenuItem => ({
+    id: `addon-${a.id}`,
+    name: `+ ${a.name}`,
+    price: a.price,
+    category: a.category || 'addons',
+    isAvailable: true,
+    stock: 9999,
+    image: '',
+    sku: '',
+  } as unknown as MenuItem);
+
+  const openAddonsAfter = (parentName: string) => {
+    if (!hasAnyAvailableAddons()) return;
+    setAddonParentName(parentName);
+    setAddonSheetOpen(true);
+  };
+
+  const handleAddonsConfirm = (selected: Array<{ addon: Addon; quantity: number }>) => {
+    selected.forEach(({ addon, quantity }) => {
+      const mi = addonToMenuItem(addon);
+      for (let i = 0; i < quantity; i++) addToCart(mi);
+    });
+  };
+
   const handleItemClick = (item: MenuItem) => {
     if (!item.isAvailable) return;
     if (item.variations && item.variations.length > 0) {
@@ -48,6 +85,7 @@ export const MenuGrid = forwardRef<HTMLDivElement>((_, ref) => {
       setPromptItem(item);
     } else {
       addToCart(item);
+      openAddonsAfter(item.name);
     }
   };
 
@@ -65,6 +103,7 @@ export const MenuGrid = forwardRef<HTMLDivElement>((_, ref) => {
       for (let i = 0; i < quantity; i++) {
         addToCart(itemToAdd);
       }
+      openAddonsAfter(itemToAdd.name);
     }
   };
 
@@ -396,7 +435,18 @@ export const MenuGrid = forwardRef<HTMLDivElement>((_, ref) => {
         open={!!promptItem}
         onOpenChange={(open) => !open && setPromptItem(null)}
         item={promptItem}
-        onAdd={(item, price, weight) => addToCart(item, price, weight)}
+        onAdd={(item, price, weight) => {
+          addToCart(item, price, weight);
+          openAddonsAfter(item.name);
+        }}
+      />
+
+      {/* Addon Selector Sheet */}
+      <AddonSelectorSheet
+        isOpen={addonSheetOpen}
+        parentName={addonParentName}
+        onClose={() => setAddonSheetOpen(false)}
+        onConfirm={handleAddonsConfirm}
       />
     </div>
   );
