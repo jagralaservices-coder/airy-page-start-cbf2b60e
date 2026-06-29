@@ -159,37 +159,15 @@ export const CustomerDetails: React.FC<CustomerDetailsProps> = ({ customer, onCh
           }} className="w-full pl-10 pr-3 py-2 pos-input text-sm" />
       </div>
       {showAddressFields && (
-        <>
-          <div className="relative">
-            <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-            <textarea placeholder={t('common.address') || 'Street Address'} value={localCustomer.address} 
-              onChange={(e) => {
-                const updated = { ...localCustomer, address: e.target.value };
-                setLocalCustomer(updated);
-                onChange(updated);
-              }} rows={2} className="w-full pl-10 pr-3 py-2 pos-input text-sm resize-none" />
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <input type="text" placeholder={t('customers.city') || 'City'} value={localCustomer.city} 
-              onChange={(e) => {
-                const updated = { ...localCustomer, city: e.target.value };
-                setLocalCustomer(updated);
-                onChange(updated);
-              }} className="pos-input text-sm py-2 px-3" />
-            <input type="text" placeholder={t('customers.state') || 'State'} value={localCustomer.state} 
-              onChange={(e) => {
-                const updated = { ...localCustomer, state: e.target.value };
-                setLocalCustomer(updated);
-                onChange(updated);
-              }} className="pos-input text-sm py-2 px-3" />
-            <input type="text" placeholder={t('customers.pincode') || 'Pincode'} value={localCustomer.pincode} 
-              onChange={(e) => {
-                const updated = { ...localCustomer, pincode: e.target.value };
-                setLocalCustomer(updated);
-                onChange(updated);
-              }} className="pos-input text-sm py-2 px-3" />
-          </div>
-        </>
+        <div className="relative">
+          <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+          <textarea placeholder={t('common.address') || 'Street Address'} value={localCustomer.address} 
+            onChange={(e) => {
+              const updated = { ...localCustomer, address: e.target.value };
+              setLocalCustomer(updated);
+              onChange(updated);
+            }} rows={2} className="w-full pl-10 pr-3 py-2 pos-input text-sm resize-none" />
+        </div>
       )}
       <div className="flex gap-2">
         <button onClick={handleSave} className="flex-1 pos-btn-primary py-2 text-sm flex items-center justify-center gap-2">
