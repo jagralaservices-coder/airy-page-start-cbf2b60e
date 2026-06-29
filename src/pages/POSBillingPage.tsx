@@ -11,6 +11,8 @@ import { BarcodeButton } from '@/components/pos/BarcodeButton';
 import { useBarcodeScanner } from '@/hooks/useBarcodeScanner';
 import { LinkBarcodeDialog } from '@/components/pos/LinkBarcodeDialog';
 import { CustomItemDialog } from '@/components/pos/CustomItemDialog';
+import { AddonSelectorSheet } from '@/components/pos/AddonSelectorSheet';
+import { getAddons, type Addon } from '@/lib/addons';
 import { PromptPriceWeightDialog } from '@/components/pos/PromptPriceWeightDialog';
 import { 
   Search, 
@@ -162,6 +164,7 @@ export const POSBillingPage: React.FC = () => {
   });
   const [showTaxDialog, setShowTaxDialog] = useState(false);
   const [showCustomItemDialog, setShowCustomItemDialog] = useState(false);
+  const [showAddonSheet, setShowAddonSheet] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(selectedTable?.id || null);
   const [selectedItemForVariation, setSelectedItemForVariation] = useState<MenuItem | null>(null);
   const [variationSheetOpen, setVariationSheetOpen] = useState(false);
@@ -226,7 +229,16 @@ export const POSBillingPage: React.FC = () => {
       isAvailable: true,
     };
 
-    return [othersItem, ...baseProducts];
+    const addonsItem: MenuItem = {
+      id: `addons-${activeCategory}`,
+      name: 'Addons',
+      price: 0,
+      category: activeCategory === 'all' ? 'addons' : activeCategory,
+      color: 'hsl(var(--card))',
+      isAvailable: true,
+    };
+
+    return [othersItem, addonsItem, ...baseProducts];
   }, [menuItems, activeCategory, searchQuery]);
 
   const activeCategories = useMemo(() => {
@@ -251,6 +263,11 @@ export const POSBillingPage: React.FC = () => {
       return;
     }
 
+    if (item.id.startsWith('addons-')) {
+      setShowAddonSheet(true);
+      return;
+    }
+
     if (!item.isAvailable) return;
     
     if (item.variations && item.variations.length > 0) {
@@ -267,6 +284,20 @@ export const POSBillingPage: React.FC = () => {
     for (let i = 0; i < quantity; i++) {
       addToCart(item);
     }
+  };
+
+  const handleAddonsConfirm = (selected: Array<{ addon: Addon; quantity: number }>) => {
+    selected.forEach(({ addon, quantity }) => {
+      const mi: MenuItem = {
+        id: `addon-${addon.id}`,
+        name: `+ ${addon.name}`,
+        price: addon.price,
+        category: addon.category || 'addons',
+        color: 'hsl(var(--card))',
+        isAvailable: true,
+      };
+      for (let i = 0; i < quantity; i++) addToCart(mi);
+    });
   };
 
   // Handle variation selection from popup
@@ -1967,6 +1998,13 @@ export const POSBillingPage: React.FC = () => {
         onOpenChange={setShowCustomItemDialog}
         onAdd={handleAddCustomItem}
         categoryId={activeCategory}
+      />
+
+      <AddonSelectorSheet
+        isOpen={showAddonSheet}
+        parentName="Bill"
+        onClose={() => setShowAddonSheet(false)}
+        onConfirm={handleAddonsConfirm}
       />
 
       {/* Variation Selector Sheet */}
