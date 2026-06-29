@@ -707,14 +707,6 @@ export const MenuManagement: React.FC = () => {
         </div>
       )}
 
-      {hasRecipeAccess && (
-        <MenuIngredientsDialog
-          open={showRecipeDialog}
-          onOpenChange={setShowRecipeDialog}
-          menuItem={recipeMenuItem}
-          onSave={handleSaveRecipe}
-        />
-      )}
 
       <VariationManagementDialog
         open={showVariationDialog}
