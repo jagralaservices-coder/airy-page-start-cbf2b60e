@@ -275,16 +275,6 @@ export const MobileMenuManagement: React.FC = () => {
         </button>
       </header>
 
-      {/* Low Stock Warning */}
-      {lowStockItems.length > 0 && (
-        <div className="mx-3 mt-2 bg-warning/10 border border-warning/20 rounded-xl p-3 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />
-          <p className="text-xs text-foreground">
-            <span className="font-medium">Low Stock:</span> {lowStockItems.slice(0, 3).map(i => i.name).join(', ')}
-            {lowStockItems.length > 3 && ` +${lowStockItems.length - 3} more`}
-          </p>
-        </div>
-      )}
 
       {/* Search */}
       <div className="p-3 bg-card border-b border-border">
@@ -358,17 +348,6 @@ export const MobileMenuManagement: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-primary font-bold">{formatCurrency(item.price)}</span>
-                      {displayStock !== undefined && (
-                        <span className={cn(
-                          'text-xs px-2 py-0.5 rounded-full flex items-center gap-1',
-                          displayStock === 0 ? 'bg-destructive/10 text-destructive' :
-                          displayStock < 10 ? 'bg-warning/10 text-warning' :
-                          'bg-success/10 text-success'
-                        )}>
-                          <Package className="w-3 h-3" />
-                          {displayStock}
-                        </span>
-                      )}
                       {hasVariations && (
                         <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
                           {item.variations!.length} var
@@ -499,11 +478,6 @@ export const MobileMenuManagement: React.FC = () => {
               <option value="add_new_category">+ Add Category</option>
             </select>
             
-            {/* Stock */}
-            <div className="flex items-center gap-2">
-              <Package className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-              <Input type="number" placeholder="Stock (empty = unlimited)" value={newItem.stock} onChange={(e) => setNewItem(prev => ({ ...prev, stock: e.target.value }))} className="h-12 text-base" />
-            </div>
 
             {/* SKU */}
             <div className="flex items-center gap-2">
@@ -595,26 +569,6 @@ export const MobileMenuManagement: React.FC = () => {
               <option value="add_new_category">+ Add Category</option>
             </select>
 
-            {/* Stock */}
-            <div className="flex items-center gap-2">
-              <Package className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-              <Input type="number" placeholder="Global Stock (empty = unlimited)" value={editItem.stock} onChange={(e) => setEditItem(prev => ({ ...prev, stock: e.target.value }))} className="h-12 text-base" />
-            </div>
-
-            {/* Store-wise Stock */}
-            {stores.length > 0 && (
-              <div className="border-t border-border pt-3 space-y-2">
-                <p className="text-sm font-medium">Store-wise Stock</p>
-                {stores.map(store => (
-                  <div key={store.id} className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground w-20 truncate">{store.name}:</span>
-                    <Input type="number" placeholder="Stock" value={editItem.storeStocks[store.id] || ''} onChange={(e) => setEditItem(prev => ({
-                      ...prev, storeStocks: { ...prev.storeStocks, [store.id]: e.target.value }
-                    }))} className="flex-1 h-10 text-sm" />
-                  </div>
-                ))}
-              </div>
-            )}
 
             {/* SKU */}
             <div className="flex items-center gap-2">
@@ -659,11 +613,6 @@ export const MobileMenuManagement: React.FC = () => {
               </label>
             </div>
 
-            {/* Stock Alert */}
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0" />
-              <Input type="number" placeholder="Stock Alert Threshold" value={editItem.stockAlertThreshold} onChange={(e) => setEditItem(prev => ({ ...prev, stockAlertThreshold: e.target.value }))} className="h-10 text-sm" />
-            </div>
 
             <div className="flex gap-3 pt-2">
               <Button 

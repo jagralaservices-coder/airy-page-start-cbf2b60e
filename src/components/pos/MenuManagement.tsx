@@ -315,15 +315,6 @@ export const MenuManagement: React.FC = () => {
                 ))}
                 <option value="add_new_category">+ Add Category</option>
               </select>
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="number"
-                  placeholder="Stock Count (leave empty for unlimited)"
-                  value={newItem.stock}
-                  onChange={(e) => setNewItem(prev => ({ ...prev, stock: e.target.value }))}
-                />
-              </div>
               
               {/* SKU/Barcode Field */}
               <div className="flex items-center gap-2">
@@ -442,37 +433,6 @@ export const MenuManagement: React.FC = () => {
                 ))}
                 <option value="add_new_category">+ Add Category</option>
               </select>
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="number"
-                  placeholder="Global Stock (leave empty for unlimited)"
-                  value={editItem.stock}
-                  onChange={(e) => setEditItem(prev => ({ ...prev, stock: e.target.value }))}
-                />
-              </div>
-              
-              {/* Store-wise Stock */}
-              {stores.length > 0 && (
-                <div className="border-t border-border pt-4 space-y-3">
-                  <p className="text-sm font-medium text-foreground">Store-wise Stock</p>
-                  {stores.map(store => (
-                    <div key={store.id} className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground w-24 truncate">{store.name}:</span>
-                      <Input
-                        type="number"
-                        placeholder="Stock"
-                        value={editItem.storeStocks[store.id] || ''}
-                        onChange={(e) => setEditItem(prev => ({
-                          ...prev,
-                          storeStocks: { ...prev.storeStocks, [store.id]: e.target.value }
-                        }))}
-                        className="flex-1"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
               
               {/* Inventory Linking - Gold+ only */}
               {hasRecipeAccess && (
@@ -546,29 +506,6 @@ export const MenuManagement: React.FC = () => {
                 </div>
               </div>
 
-              {/* Stock Alert Threshold */}
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-warning" />
-                <Input
-                  type="number"
-                  placeholder="Stock Alert Threshold (optional)"
-                  value={editItem.stockAlertThreshold}
-                  onChange={(e) => setEditItem(prev => ({ ...prev, stockAlertThreshold: e.target.value }))}
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Alert when stock falls below this value. Leave empty for no alert.
-              </p>
-              
-              <p className="text-sm text-muted-foreground">
-                Current stock: {editingItem.stock !== undefined ? editingItem.stock : 'Unlimited'}
-                {editingItem.stockAlertThreshold !== undefined && (
-                  <span className="ml-2 text-warning">• Alert at: {editingItem.stockAlertThreshold}</span>
-                )}
-                {hasRecipeAccess && editingItem.linkedInventoryId && (
-                  <span className="ml-2 text-primary">• Linked to inventory</span>
-                )}
-              </p>
               <Button onClick={handleEditItem} className="w-full">
                 <Edit className="w-4 h-4 mr-2" /> Update Item
               </Button>
@@ -577,18 +514,6 @@ export const MenuManagement: React.FC = () => {
         </div>
       )}
 
-      {/* Low Stock Warning */}
-      {lowStockItems.length > 0 && (
-        <div className="bg-warning/10 border border-warning/20 rounded-xl p-4 flex items-center gap-3">
-          <AlertTriangle className="w-5 h-5 text-warning" />
-          <div className="flex-1">
-            <p className="font-medium text-foreground">Low Stock Alert</p>
-            <p className="text-sm text-muted-foreground">
-              {lowStockItems.length} items have low stock: {lowStockItems.slice(0, 3).map(i => i.name).join(', ')}
-            </p>
-          </div>
-        </div>
-      )}
 
       <div className="flex justify-between items-center">
         <div>
@@ -673,7 +598,7 @@ export const MenuManagement: React.FC = () => {
               <th className="text-left p-4 text-muted-foreground font-medium">Category</th>
               <th className="text-right p-4 text-muted-foreground font-medium">Price</th>
               <th className="text-center p-4 text-muted-foreground font-medium">Variations</th>
-              <th className="text-center p-4 text-muted-foreground font-medium">Stock</th>
+              
               {hasRecipeAccess && <th className="text-center p-4 text-muted-foreground font-medium">Recipe</th>}
               <th className="text-center p-4 text-muted-foreground font-medium">Status</th>
               <th className="text-center p-4 text-muted-foreground font-medium">Actions</th>
@@ -723,65 +648,6 @@ export const MenuManagement: React.FC = () => {
                         ? `${item.variations.length} options`
                         : "Add"}
                     </button>
-                  </td>
-                  <td className="p-4 text-center">
-                    {editingStockId === item.id ? (
-                      <div className="flex items-center justify-center gap-1">
-                        <button
-                          onClick={() => setTempStock(String(Math.max(0, Number(tempStock) - 1)))}
-                          className="p-1 hover:bg-muted rounded"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <Input
-                          type="number"
-                          value={tempStock}
-                          onChange={(e) => setTempStock(e.target.value)}
-                          className="w-16 h-8 text-center text-sm"
-                          min="0"
-                          autoFocus
-                        />
-                        <button
-                          onClick={() => setTempStock(String(Number(tempStock) + 1))}
-                          className="p-1 hover:bg-muted rounded"
-                        >
-                          <PlusCircle className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleQuickStockUpdate(item.id, Number(tempStock))}
-                          className="p-1 bg-success/20 hover:bg-success/30 rounded text-success"
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => { setEditingStockId(null); setTempStock(''); }}
-                          className="p-1 hover:bg-destructive/20 rounded text-destructive"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-1">
-                        <button
-                          onClick={() => startEditingStock(item)}
-                          className={cn(
-                            "px-3 py-1 rounded-full text-sm font-medium min-w-[50px] hover:ring-2 hover:ring-primary/50 transition-all cursor-pointer",
-                            displayStock === undefined 
-                              ? "bg-secondary text-muted-foreground"
-                              : displayStock === 0 
-                                ? "bg-destructive/20 text-destructive" 
-                                : displayStock < 10 
-                                  ? "bg-warning/20 text-warning"
-                                  : "bg-success/20 text-success"
-                          )}
-                        >
-                          {displayStock !== undefined ? displayStock : 'Set'}
-                        </button>
-                        {activeStore && storeStock !== undefined && (
-                          <span className="text-xs text-muted-foreground">{activeStore.name}</span>
-                        )}
-                      </div>
-                    )}
                   </td>
                   {hasRecipeAccess && (
                   <td className="p-4 text-center">
