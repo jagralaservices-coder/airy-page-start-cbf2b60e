@@ -136,6 +136,7 @@ export const POSBillingPage: React.FC = () => {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [showHeldBills, setShowHeldBills] = useState(false);
   const [showQROrders, setShowQROrders] = useState(false);
+  const [selectedHeldBillIds, setSelectedHeldBillIds] = useState<string[]>([]);
 
   const [selectedPayment, setSelectedPayment] = useState<'cash' | 'card' | 'upi' | 'due' | 'part' | 'wallet' | 'credit' | 'access' | null>(() => {
     return (localStorage.getItem('pos_billing_selected_payment') as any) || null;
