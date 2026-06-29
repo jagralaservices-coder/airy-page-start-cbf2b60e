@@ -1959,9 +1959,10 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (order.orderType === 'dine-in' && order.tableNumber) {
       const table = tables.find(t => t.number === order.tableNumber);
       if (table) {
-        updateTableStatus(table.id, 'available');
+        updateTableStatus(table.id, 'occupied');
       }
     }
+
 
     // Auto-create Credit Ledger entry for due/credit sales
     const finalCustomerName = _finalCustomerName;
