@@ -69,6 +69,7 @@ import {
 } from '@/lib/store';
 import { triggerDebouncedBackup } from '@/lib/backupUtils';
 import { logSecurityAction } from '@/lib/auditLogger';
+import { logInventoryHistory } from '@/lib/inventoryHistory';
 
 // ===== Phase 2.6 — Credit Ledger helpers =====
 // Resolve (or create) a pos_customers row for a credit/due sale and return its id.
