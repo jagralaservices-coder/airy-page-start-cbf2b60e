@@ -1322,14 +1322,14 @@ export const POSBillingPage: React.FC = () => {
 
     <div className={cn("h-[calc(100vh-56px)] flex overflow-hidden", editMode.isEditMode && "mt-[88px] h-[calc(100vh-56px-88px)]")}>
       {/* Left Panel - Categories (Vertical) */}
-      <div id="categories-sidebar" className="w-16 xl:w-24 bg-card border-r border-border flex flex-col overflow-hidden">
-        <div className="px-0 py-2 flex-1 overflow-y-auto no-scrollbar">
+      <div id="categories-sidebar" className="w-14 xl:w-20 bg-card border-r border-border flex flex-col overflow-hidden">
+        <div className="px-0.5 py-1 flex-1 overflow-y-auto no-scrollbar">
           <button
             onClick={() => setActiveCategory('all')}
             className={cn(
-              'w-full px-1 py-3 rounded-xl text-center text-xs font-medium mb-2 transition-all',
-              activeCategory === 'all' 
-                ? 'bg-primary text-primary-foreground' 
+              'w-full px-0.5 py-1.5 rounded-lg text-center text-xs font-medium mb-1 transition-all',
+              activeCategory === 'all'
+                ? 'bg-primary text-primary-foreground'
                 : 'bg-secondary hover:bg-muted'
             )}
           >
@@ -1340,14 +1340,14 @@ export const POSBillingPage: React.FC = () => {
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
               className={cn(
-                'w-full px-1 py-3 rounded-xl text-center mb-2 transition-all',
-                activeCategory === cat.id 
-                  ? 'bg-primary text-primary-foreground' 
+                'w-full px-0.5 py-1.5 rounded-lg text-center mb-1 transition-all',
+                activeCategory === cat.id
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary hover:bg-muted'
               )}
             >
-              <span className="text-lg block mb-1">{cat.icon}</span>
-              <span className="text-[11px] font-medium block truncate px-0.5">{cat.name}</span>
+              <span className="text-lg block mb-0.5">{cat.icon}</span>
+              <span className="text-[11px] font-medium block truncate px-0">{cat.name}</span>
             </button>
           ))}
         </div>
