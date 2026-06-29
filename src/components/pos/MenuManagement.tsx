@@ -649,65 +649,6 @@ export const MenuManagement: React.FC = () => {
                         : "Add"}
                     </button>
                   </td>
-                  <td className="p-4 text-center">
-                    {editingStockId === item.id ? (
-                      <div className="flex items-center justify-center gap-1">
-                        <button
-                          onClick={() => setTempStock(String(Math.max(0, Number(tempStock) - 1)))}
-                          className="p-1 hover:bg-muted rounded"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <Input
-                          type="number"
-                          value={tempStock}
-                          onChange={(e) => setTempStock(e.target.value)}
-                          className="w-16 h-8 text-center text-sm"
-                          min="0"
-                          autoFocus
-                        />
-                        <button
-                          onClick={() => setTempStock(String(Number(tempStock) + 1))}
-                          className="p-1 hover:bg-muted rounded"
-                        >
-                          <PlusCircle className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleQuickStockUpdate(item.id, Number(tempStock))}
-                          className="p-1 bg-success/20 hover:bg-success/30 rounded text-success"
-                        >
-                          <Check className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => { setEditingStockId(null); setTempStock(''); }}
-                          className="p-1 hover:bg-destructive/20 rounded text-destructive"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-1">
-                        <button
-                          onClick={() => startEditingStock(item)}
-                          className={cn(
-                            "px-3 py-1 rounded-full text-sm font-medium min-w-[50px] hover:ring-2 hover:ring-primary/50 transition-all cursor-pointer",
-                            displayStock === undefined 
-                              ? "bg-secondary text-muted-foreground"
-                              : displayStock === 0 
-                                ? "bg-destructive/20 text-destructive" 
-                                : displayStock < 10 
-                                  ? "bg-warning/20 text-warning"
-                                  : "bg-success/20 text-success"
-                          )}
-                        >
-                          {displayStock !== undefined ? displayStock : 'Set'}
-                        </button>
-                        {activeStore && storeStock !== undefined && (
-                          <span className="text-xs text-muted-foreground">{activeStore.name}</span>
-                        )}
-                      </div>
-                    )}
-                  </td>
                   {hasRecipeAccess && (
                   <td className="p-4 text-center">
                     <button
