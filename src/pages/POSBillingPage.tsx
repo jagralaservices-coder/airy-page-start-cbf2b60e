@@ -286,6 +286,20 @@ export const POSBillingPage: React.FC = () => {
     }
   };
 
+  const handleAddonsConfirm = (selected: Array<{ addon: Addon; quantity: number }>) => {
+    selected.forEach(({ addon, quantity }) => {
+      const mi: MenuItem = {
+        id: `addon-${addon.id}`,
+        name: `+ ${addon.name}`,
+        price: addon.price,
+        category: addon.category || 'addons',
+        color: 'hsl(var(--card))',
+        isAvailable: true,
+      };
+      for (let i = 0; i < quantity; i++) addToCart(mi);
+    });
+  };
+
   // Handle variation selection from popup
   const handleVariationSelect = (item: MenuItem, variation?: MenuItemVariation, quantity: number = 1) => {
     const itemToAdd = variation ? {
