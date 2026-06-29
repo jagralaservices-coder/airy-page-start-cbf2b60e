@@ -2163,9 +2163,9 @@ export const POSBillingPage: React.FC = () => {
                 onClick={() => handlePaymentSelect('cash')}
                 disabled={cart.length === 0}
                 className={cn(
-                  'h-9 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs font-semibold font-semibold bg-primary text-primary-foreground border-primary hover:bg-primary/90',
-                  selectedPayment === 'cash' && 'ring-2 ring-primary-foreground/60 ring-offset-2 ring-offset-background',
-                  activeSection === 'payments' && paymentHighlightIndex === 0 && 'ring-2 ring-primary ring-offset-1 scale-[1.02]',
+                  'h-9 rounded-xl flex items-center justify-center gap-2 border shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-xs font-semibold font-semibold bg-success text-success-foreground border-success hover:bg-success/90',
+                  selectedPayment === 'cash' && 'ring-2 ring-success-foreground/60 ring-offset-2 ring-offset-background',
+                  activeSection === 'payments' && paymentHighlightIndex === 0 && 'ring-2 ring-success ring-offset-1 scale-[1.02]',
                   cart.length === 0 && 'opacity-50 cursor-not-allowed'
                 )}
               >
