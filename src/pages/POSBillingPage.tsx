@@ -579,6 +579,11 @@ export const POSBillingPage: React.FC = () => {
         setCustomer({ name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' });
         setPartPaymentDetails([]);
         setIsPaid(false);
+        // Auto-revert to takeaway after each completed sale
+        setCurrentOrderType('takeaway');
+        setSelectedTable(null);
+        setSelectedTableId(null);
+
       }
     } catch (error) {
       console.error('Error completing sale:', error);
