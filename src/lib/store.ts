@@ -170,6 +170,15 @@ export interface AttendanceRecord {
   status: 'present' | 'absent' | 'half-day';
 }
 
+export interface TableReservation {
+  name: string;
+  phone?: string;
+  time?: string; // ISO datetime
+  partySize?: number;
+  notes?: string;
+  createdAt?: string;
+}
+
 export interface Table {
   id: string;
   number: number;
@@ -178,7 +187,9 @@ export interface Table {
   currentOrderId?: string;
   name?: string; // Custom table name/alias (e.g., "Window Seat", "VIP 1")
   section?: string; // Section this table belongs to
+  reservation?: TableReservation;
 }
+
 
 export interface InventoryItem {
   id: string;

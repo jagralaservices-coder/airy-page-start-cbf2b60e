@@ -44,6 +44,9 @@ import {
   PackagePlus,
   QrCode,
   ShoppingBag,
+  CalendarClock,
+  X,
+
   Landmark
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -67,6 +70,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+
 import { CustomerDetails } from '@/components/pos/CustomerDetails';
 import { autoShareBillAfterPrint } from '@/lib/billShareUtils';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -128,6 +140,8 @@ export const POSBillingPage: React.FC = () => {
     heldBills,
     recallBill,
     mergeBills,
+    updateTableStatus,
+
   } = usePOS();
 
   const [searchQuery, setSearchQuery] = useState(() => {
@@ -171,6 +185,9 @@ export const POSBillingPage: React.FC = () => {
   const [addonParentForSheet, setAddonParentForSheet] = useState<CartItem | null>(null);
   const [showTableSelector, setShowTableSelector] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState<string | null>(selectedTable?.id || null);
+  const [reserveDialogTableId, setReserveDialogTableId] = useState<string | null>(null);
+  const [reserveForm, setReserveForm] = useState<{ name: string; phone: string; time: string; partySize: string; notes: string }>({ name: '', phone: '', time: '', partySize: '', notes: '' });
+
   const [selectedItemForVariation, setSelectedItemForVariation] = useState<MenuItem | null>(null);
   const [variationSheetOpen, setVariationSheetOpen] = useState(false);
   const [promptItem, setPromptItem] = useState<MenuItem | null>(null);
@@ -1407,87 +1424,181 @@ export const POSBillingPage: React.FC = () => {
                     <span className="text-xs text-muted-foreground">{t('tables.vacant')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-warning" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-destructive" />
                     <span className="text-xs text-muted-foreground">{t('tables.occupied')}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-destructive" />
-                    <span className="text-xs text-muted-foreground">{t('tables.billed')}</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-warning" />
+                    <span className="text-xs text-muted-foreground">{t('tables.reserved')}</span>
                   </div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-2">
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                     {tables.map(table => {
                       const tableOrders = orders.filter(o => o.orderType === 'dine-in' && o.tableNumber === table.number);
-                      const hasActiveOrder = tableOrders.some(o => ['pending', 'preparing', 'ready'].includes(o.status));
-                      const hasCompletedOrder = tableOrders.some(o => o.status === 'completed');
+                      const hasActiveOrder = tableOrders.some(o => ['pending', 'preparing', 'ready', 'completed'].includes(o.status));
 
-                      let effectiveStatus: 'available' | 'occupied' | 'reserved' | 'billed' = table.status;
-                      if (effectiveStatus !== 'billed' && effectiveStatus !== 'reserved') {
-                        if (hasActiveOrder) effectiveStatus = 'occupied';
-                        else if (hasCompletedOrder) effectiveStatus = 'billed';
-                      }
+                      let effectiveStatus: 'available' | 'occupied' | 'reserved' = 'available';
+                      if (table.status === 'reserved') effectiveStatus = 'reserved';
+                      else if (hasActiveOrder || table.status === 'occupied' || table.status === 'billed') effectiveStatus = 'occupied';
 
-                      const isOccupied = effectiveStatus === 'occupied' && table.id !== selectedTableId;
-                      const isBilled = effectiveStatus === 'billed';
+                      const isOccupied = effectiveStatus === 'occupied';
+                      const isReserved = effectiveStatus === 'reserved';
                       const isSelected = table.id === selectedTableId;
+                      const disabled = isOccupied && table.id !== selectedTableId;
 
-                      const badgeClass = isBilled
-                        ? 'bg-destructive/15 text-destructive'
-                        : isOccupied
-                          ? 'bg-warning/15 text-warning'
-                          : 'bg-success/15 text-success';
+                      const tone = isOccupied
+                        ? { badge: 'bg-destructive/15 text-destructive', border: 'border-destructive/30', text: 'text-destructive' }
+                        : isReserved
+                          ? { badge: 'bg-warning/15 text-warning', border: 'border-warning/30', text: 'text-warning' }
+                          : { badge: 'bg-success/15 text-success', border: 'border-success/30', text: 'text-success' };
 
-                      const borderClass = isBilled
-                        ? 'border-destructive/30'
-                        : isOccupied
-                          ? 'border-warning/30'
-                          : 'border-success/30';
-
-                      const textClass = isBilled
-                        ? 'text-destructive'
-                        : isOccupied
-                          ? 'text-warning'
-                          : 'text-success';
-
-                      const label = effectiveStatus === 'available' ? t('tables.vacant')
-                        : effectiveStatus === 'occupied' ? t('tables.occupied')
-                        : effectiveStatus === 'billed' ? t('tables.billed')
-                        : t('tables.reserved');
+                      const label = isOccupied ? t('tables.occupied') : isReserved ? t('tables.reserved') : t('tables.vacant');
 
                       return (
-                        <button
+                        <div
                           key={table.id}
-                          disabled={isOccupied}
-                          onClick={() => {
-                            handleTableChange(table.id);
-                            setShowTableSelector(false);
-                          }}
                           className={cn(
-                            'flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
+                            'relative flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all',
                             isSelected ? 'ring-2 ring-primary ring-offset-1' : '',
-                            borderClass,
-                            isOccupied ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-sm hover:scale-[1.02]'
+                            tone.border,
+                            disabled ? 'opacity-70' : 'hover:shadow-sm'
                           )}
                         >
-                          <span className={cn('w-10 h-10 flex items-center justify-center rounded-lg text-base font-bold', badgeClass)}>
-                            {table.number}
-                          </span>
-                          <span className={cn('text-xs font-semibold', textClass)}>
-                            {label}
-                          </span>
-                          <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                            <Users className="w-3 h-3" />
-                            {table.capacity}
-                          </span>
-                        </button>
+                          <button
+                            type="button"
+                            disabled={disabled}
+                            onClick={() => {
+                              handleTableChange(table.id);
+                              setShowTableSelector(false);
+                            }}
+                            className={cn('flex flex-col items-center gap-2 w-full', disabled ? 'cursor-not-allowed' : 'cursor-pointer')}
+                          >
+                            <span className={cn('w-10 h-10 flex items-center justify-center rounded-lg text-base font-bold', tone.badge)}>
+                              {table.number}
+                            </span>
+                            <span className={cn('text-xs font-semibold', tone.text)}>
+                              {label}
+                            </span>
+                            <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                              <Users className="w-3 h-3" />
+                              {table.capacity}
+                            </span>
+                          </button>
+
+                          {isReserved && table.reservation && (
+                            <div className="w-full text-[10px] text-center text-muted-foreground leading-tight border-t pt-1.5 mt-1">
+                              <div className="font-semibold text-foreground truncate">{table.reservation.name}</div>
+                              {table.reservation.phone && <div className="truncate">{table.reservation.phone}</div>}
+                              {table.reservation.time && (
+                                <div className="truncate">
+                                  {new Date(table.reservation.time).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="flex gap-1 w-full pt-1">
+                            {effectiveStatus === 'available' && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1 h-7 text-[10px] gap-1"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setReserveForm({ name: '', phone: '', time: '', partySize: String(table.capacity || ''), notes: '' });
+                                  setReserveDialogTableId(table.id);
+                                }}
+                              >
+                                <CalendarClock className="w-3 h-3" />
+                                {t('tables.reserved')}
+                              </Button>
+                            )}
+                            {(isOccupied || isReserved) && (
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="flex-1 h-7 text-[10px] gap-1 text-muted-foreground hover:text-destructive"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateTableStatus(table.id, 'available', null);
+                                  toast({ title: `Table ${table.number} freed` });
+                                }}
+                              >
+                                <X className="w-3 h-3" />
+                                Free
+                              </Button>
+                            )}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
                 </div>
               </SheetContent>
             </Sheet>
+
+            {/* Reservation Dialog */}
+            <Dialog open={!!reserveDialogTableId} onOpenChange={(open) => !open && setReserveDialogTableId(null)}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <CalendarClock className="w-5 h-5" />
+                    Reserve Table {tables.find(t => t.id === reserveDialogTableId)?.number}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-3 py-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="rsv-name">Name *</Label>
+                    <Input id="rsv-name" value={reserveForm.name} onChange={(e) => setReserveForm({ ...reserveForm, name: e.target.value })} placeholder="Guest name" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="rsv-phone">Contact</Label>
+                      <Input id="rsv-phone" value={reserveForm.phone} onChange={(e) => setReserveForm({ ...reserveForm, phone: e.target.value })} placeholder="Phone" />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="rsv-party">Party Size</Label>
+                      <Input id="rsv-party" type="number" min={1} value={reserveForm.partySize} onChange={(e) => setReserveForm({ ...reserveForm, partySize: e.target.value })} />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="rsv-time">Reservation Time</Label>
+                    <Input id="rsv-time" type="datetime-local" value={reserveForm.time} onChange={(e) => setReserveForm({ ...reserveForm, time: e.target.value })} />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="rsv-notes">Notes</Label>
+                    <Input id="rsv-notes" value={reserveForm.notes} onChange={(e) => setReserveForm({ ...reserveForm, notes: e.target.value })} placeholder="Special requests" />
+                  </div>
+                </div>
+                <DialogFooter className="gap-2">
+                  <Button variant="outline" onClick={() => setReserveDialogTableId(null)}>Cancel</Button>
+                  <Button
+                    onClick={() => {
+                      if (!reserveForm.name.trim()) {
+                        toast({ title: 'Name is required', variant: 'destructive' });
+                        return;
+                      }
+                      if (!reserveDialogTableId) return;
+                      const t = tables.find(t => t.id === reserveDialogTableId);
+                      updateTableStatus(reserveDialogTableId, 'reserved', {
+                        name: reserveForm.name.trim(),
+                        phone: reserveForm.phone.trim() || undefined,
+                        time: reserveForm.time ? new Date(reserveForm.time).toISOString() : undefined,
+                        partySize: reserveForm.partySize ? Number(reserveForm.partySize) : undefined,
+                        notes: reserveForm.notes.trim() || undefined,
+                      });
+                      toast({ title: `Table ${t?.number} reserved for ${reserveForm.name}` });
+                      setReserveDialogTableId(null);
+                    }}
+                  >
+                    Reserve
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
 
             {selectedTable && (
               <div className="ml-auto px-3 py-2 bg-success/10 text-success rounded-lg text-sm font-medium">

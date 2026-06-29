@@ -239,7 +239,7 @@ interface POSContextType {
 
   // Tables
   tables: Table[];
-  updateTableStatus: (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed') => void;
+  updateTableStatus: (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed', reservation?: import('@/lib/store').TableReservation | null) => void;
 
   // KOT
   printKOT: (order: Order) => void;
@@ -1959,9 +1959,10 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (order.orderType === 'dine-in' && order.tableNumber) {
       const table = tables.find(t => t.number === order.tableNumber);
       if (table) {
-        updateTableStatus(table.id, 'available');
+        updateTableStatus(table.id, 'occupied');
       }
     }
+
 
     // Auto-create Credit Ledger entry for due/credit sales
     const finalCustomerName = _finalCustomerName;
@@ -2166,8 +2167,9 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     if (currentOrderType === 'dine-in' && selectedTable) {
-      updateTableStatus(selectedTable.id, 'available');
+      updateTableStatus(selectedTable.id, 'occupied');
     }
+
 
     clearCart();
     return order;
@@ -2313,11 +2315,27 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     toast.success(`Merged ${billsToMerge.length} bills into current order`);
   };
 
-  const updateTableStatus = (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed') => {
-    const newTables = tables.map((t) => (t.id === tableId ? { ...t, status } : t));
+  const updateTableStatus = (
+    tableId: string,
+    status: 'available' | 'occupied' | 'reserved' | 'billed',
+    reservation?: import('@/lib/store').TableReservation | null
+  ) => {
+    const newTables = tables.map((t) => {
+      if (t.id !== tableId) return t;
+      const next: typeof t = { ...t, status };
+      if (reservation === null) {
+        delete (next as any).reservation;
+      } else if (reservation) {
+        next.reservation = { ...reservation, createdAt: reservation.createdAt || new Date().toISOString() };
+      } else if (status !== 'reserved') {
+        delete (next as any).reservation;
+      }
+      return next;
+    });
     setTablesState(newTables);
     setTables(newTables);
   };
+
 
   const printKOT = (order: Order) => {
     // In a real app, this would send to a thermal printer
