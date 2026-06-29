@@ -239,7 +239,7 @@ interface POSContextType {
 
   // Tables
   tables: Table[];
-  updateTableStatus: (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed') => void;
+  updateTableStatus: (tableId: string, status: 'available' | 'occupied' | 'reserved' | 'billed', reservation?: import('@/lib/store').TableReservation | null) => void;
 
   // KOT
   printKOT: (order: Order) => void;
