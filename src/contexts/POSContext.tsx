@@ -2167,8 +2167,9 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     if (currentOrderType === 'dine-in' && selectedTable) {
-      updateTableStatus(selectedTable.id, 'available');
+      updateTableStatus(selectedTable.id, 'occupied');
     }
+
 
     clearCart();
     return order;
