@@ -211,6 +211,9 @@ export const InventoryView: React.FC = () => {
     navigate('/smart-inventory');
     return null;
   }
+  if (activeView === 'inventoryHistory') {
+    return <InventoryHistoryView onBack={() => setActiveView('main')} inventory={inventory} />;
+  }
 
   return (
     <div className="min-h-screen bg-background">
