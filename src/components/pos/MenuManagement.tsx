@@ -78,6 +78,20 @@ export const MenuManagement: React.FC = () => {
   const [variationMenuItem, setVariationMenuItem] = useState<MenuItem | null>(null);
   const [showBarcodeDialog, setShowBarcodeDialog] = useState(false);
   const [barcodeMenuItem, setBarcodeMenuItem] = useState<MenuItem | null>(null);
+  const [showAddAddons, setShowAddAddons] = useState(false);
+  const [addonStep, setAddonStep] = useState<'select-product' | 'select-addons'>('select-product');
+  const [addonProductId, setAddonProductId] = useState<string>('');
+  const [addonSelections, setAddonSelections] = useState<string[]>([]);
+  const [addonSearch, setAddonSearch] = useState('');
+
+  const saveAddons = () => {
+    if (!addonProductId) return;
+    const item = menuItems.find(m => m.id === addonProductId);
+    if (!item) return;
+    updateMenuItem(addonProductId, { ...(item as any), addons: addonSelections } as any);
+    toast.success(`${addonSelections.length} addon(s) linked to ${item.name}`);
+    setShowAddAddons(false);
+  };
 
   // Load inventory items
   useEffect(() => {
@@ -537,6 +551,13 @@ export const MenuManagement: React.FC = () => {
           >
             <Upload className="w-5 h-5" />
             Bulk Upload
+          </button>
+          <button 
+            onClick={() => { setAddonStep('select-product'); setAddonProductId(''); setAddonSelections([]); setShowAddAddons(true); }}
+            className="pos-btn-secondary px-4 py-2 flex items-center gap-2"
+          >
+            <PlusCircle className="w-5 h-5" />
+            Add Addons
           </button>
           <button 
             onClick={() => setShowAddItem(true)}
