@@ -1880,7 +1880,7 @@ export const POSBillingPage: React.FC = () => {
 
           {/* Payment Methods */}
           <div id="payments-section" className={cn("border-t border-border p-1.5 transition-all duration-200", activeSection === 'payments' && "ring-2 ring-primary ring-inset bg-primary/[0.005]")}>
-            <p className="text-xs text-muted-foreground mb-1">{t('common.selectPayment').toUpperCase()}</p>
+            
             <div className="grid grid-cols-4 gap-2">
               <button
                 onClick={() => handlePaymentSelect('cash')}
