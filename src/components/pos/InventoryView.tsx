@@ -24,8 +24,11 @@ import {
   History,
   ArrowDownCircle,
   ArrowUpCircle,
-  Factory
+  Factory,
+  UtensilsCrossed
 } from 'lucide-react';
+import { MenuIngredientsDialog } from './MenuIngredientsDialog';
+import { getMenuItems, setMenuItems, MenuItem, MenuItemIngredient } from '@/lib/store';
 import { logInventoryHistory, getInventoryHistory, InventoryHistoryEntry } from '@/lib/inventoryHistory';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
