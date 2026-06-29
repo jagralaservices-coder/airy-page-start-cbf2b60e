@@ -361,6 +361,22 @@ const PurchaseManagementView: React.FC<{ onBack: () => void }> = ({ onBack }) =>
       }
     }
 
+    // Log purchase history (always, even if no expense)
+    if (parseFloat(formData.quantity) > 0) {
+      const targetId = existingItem ? existingItem.id : (inventory[0]?.id || formData.name);
+      logInventoryHistory({
+        type: 'purchase',
+        inventoryId: existingItem ? existingItem.id : targetId,
+        inventoryName: formData.name,
+        quantity: quantityInBase,
+        unit: baseUnit,
+        costPerUnit: costPerUnit,
+        totalCost: costPerUnit > 0 ? parseFloat(formData.quantity) * costPerUnit : undefined,
+        costUnit: formData.costUnit,
+        source: existingItem ? 'Stock added' : 'New inventory item',
+      });
+    }
+
     setFormData({ name: '', quantity: '', unit: 'kg', costPerUnit: '', costUnit: 'kg', minStock: '10', isManufactured: false });
     setShowAddDialog(false);
   };
