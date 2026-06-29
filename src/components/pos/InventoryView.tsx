@@ -54,7 +54,7 @@ import { InventoryComponentsDialog } from './InventoryComponentsDialog';
 import { BulkInventoryUpload } from './BulkInventoryUpload';
 import { useSubscription } from '@/hooks/useSubscription';
 
-type ViewType = 'main' | 'purchaseManagement' | 'requestForPurchase' | 'wastage' | 'addWastage' | 'convertRawMaterial' | 'currentStock' | 'openingClosing' | 'indentManagement' | 'productionExecution' | 'bulkUpload' | 'smartInventory' | 'inventoryHistory';
+type ViewType = 'main' | 'purchaseManagement' | 'requestForPurchase' | 'wastage' | 'addWastage' | 'convertRawMaterial' | 'currentStock' | 'openingClosing' | 'indentManagement' | 'productionExecution' | 'bulkUpload' | 'smartInventory' | 'inventoryHistory' | 'menuRecipes';
 
 interface InventoryMenuSection {
   title: string;
