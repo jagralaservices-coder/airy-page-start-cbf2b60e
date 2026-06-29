@@ -1837,7 +1837,7 @@ export const POSBillingPage: React.FC = () => {
           )}
 
           {/* Complimentary & Total */}
-          <div className="space-y-2 border-t border-border p-2">
+          <div className="space-y-1 border-t border-border p-1.5">
             <div className="flex items-center justify-between gap-4">
               <div id="complimentary-paid-container" className="flex items-center gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
