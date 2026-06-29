@@ -613,11 +613,6 @@ export const MobileMenuManagement: React.FC = () => {
               </label>
             </div>
 
-            {/* Stock Alert */}
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0" />
-              <Input type="number" placeholder="Stock Alert Threshold" value={editItem.stockAlertThreshold} onChange={(e) => setEditItem(prev => ({ ...prev, stockAlertThreshold: e.target.value }))} className="h-10 text-sm" />
-            </div>
 
             <div className="flex gap-3 pt-2">
               <Button 
