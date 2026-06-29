@@ -433,37 +433,6 @@ export const MenuManagement: React.FC = () => {
                 ))}
                 <option value="add_new_category">+ Add Category</option>
               </select>
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="number"
-                  placeholder="Global Stock (leave empty for unlimited)"
-                  value={editItem.stock}
-                  onChange={(e) => setEditItem(prev => ({ ...prev, stock: e.target.value }))}
-                />
-              </div>
-              
-              {/* Store-wise Stock */}
-              {stores.length > 0 && (
-                <div className="border-t border-border pt-4 space-y-3">
-                  <p className="text-sm font-medium text-foreground">Store-wise Stock</p>
-                  {stores.map(store => (
-                    <div key={store.id} className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground w-24 truncate">{store.name}:</span>
-                      <Input
-                        type="number"
-                        placeholder="Stock"
-                        value={editItem.storeStocks[store.id] || ''}
-                        onChange={(e) => setEditItem(prev => ({
-                          ...prev,
-                          storeStocks: { ...prev.storeStocks, [store.id]: e.target.value }
-                        }))}
-                        className="flex-1"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
               
               {/* Inventory Linking - Gold+ only */}
               {hasRecipeAccess && (
