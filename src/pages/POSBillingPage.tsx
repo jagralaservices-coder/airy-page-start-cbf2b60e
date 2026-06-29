@@ -1523,7 +1523,7 @@ export const POSBillingPage: React.FC = () => {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   updateTableStatus(table.id, 'available', null);
-                                  toast.success(`Table ${table.number} freed`);
+                                  toast({ title: `Table ${table.number} freed` });
                                 }}
                               >
                                 <X className="w-3 h-3" />
@@ -1577,7 +1577,7 @@ export const POSBillingPage: React.FC = () => {
                   <Button
                     onClick={() => {
                       if (!reserveForm.name.trim()) {
-                        toast.error('Name is required');
+                        toast({ title: 'Name is required', variant: 'destructive' });
                         return;
                       }
                       if (!reserveDialogTableId) return;
@@ -1589,7 +1589,7 @@ export const POSBillingPage: React.FC = () => {
                         partySize: reserveForm.partySize ? Number(reserveForm.partySize) : undefined,
                         notes: reserveForm.notes.trim() || undefined,
                       });
-                      toast.success(`Table ${t?.number} reserved for ${reserveForm.name}`);
+                      toast({ title: `Table ${t?.number} reserved for ${reserveForm.name}` });
                       setReserveDialogTableId(null);
                     }}
                   >
