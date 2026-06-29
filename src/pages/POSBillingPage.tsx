@@ -2001,9 +2001,9 @@ export const POSBillingPage: React.FC = () => {
       />
 
       <AddonSelectorSheet
-        isOpen={showAddonSheet}
-        parentName="Bill"
-        onClose={() => setShowAddonSheet(false)}
+        isOpen={!!addonParentForSheet}
+        parentName={addonParentForSheet?.name || ''}
+        onClose={() => setAddonParentForSheet(null)}
         onConfirm={handleAddonsConfirm}
       />
 
