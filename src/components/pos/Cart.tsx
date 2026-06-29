@@ -205,7 +205,7 @@ export const Cart = forwardRef<HTMLDivElement>((_, ref) => {
       name: customer.name,
       phone: customer.phone,
       email: customer.email,
-      address: [customer.address, customer.city, customer.state, customer.pincode].filter(Boolean).join(', '),
+      address: customer.address,
     }, paymentBreakdown);
     if (order) {
       const completedOrderData = {
