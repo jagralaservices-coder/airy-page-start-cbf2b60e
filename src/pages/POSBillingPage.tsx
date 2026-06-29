@@ -1395,17 +1395,28 @@ export const POSBillingPage: React.FC = () => {
               </button>
             ))}
 
-            {canAccess('tableManagement') && currentOrderType === 'dine-in' && (
+            {canAccess('tableManagement') && canAccess('dineIn') && (
               <Button
-                variant="outline"
+                variant={currentOrderType === 'dine-in' ? 'default' : 'outline'}
                 size="sm"
-                className="h-9 px-2 text-xs gap-1 shrink-0 whitespace-nowrap max-w-[140px] truncate"
-                onClick={() => setShowTableSelector(true)}
+                className={cn(
+                  'h-9 px-2.5 text-xs gap-1 shrink-0 whitespace-nowrap max-w-[160px] truncate',
+                  currentOrderType === 'dine-in' && 'bg-primary text-primary-foreground hover:bg-primary/90'
+                )}
+                onClick={() => {
+                  setCurrentOrderType('dine-in');
+                  setShowTableSelector(true);
+                }}
               >
                 <MapPin className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{selectedTable ? `${t('common.table')} ${selectedTable.number}` : t('tables.selectTable')}</span>
+                <span className="truncate">
+                  {currentOrderType === 'dine-in' && selectedTable
+                    ? `${t('common.table')} ${selectedTable.number}`
+                    : t('tables.selectTable')}
+                </span>
               </Button>
             )}
+
 
 
             {/* Table Management sheet */}
