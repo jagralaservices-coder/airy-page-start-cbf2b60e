@@ -2680,6 +2680,7 @@ export const POSProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         holdBill,
         recallBill,
         deleteHeldBill,
+        mergeBills,
         tables,
         updateTableStatus,
         printKOT,
