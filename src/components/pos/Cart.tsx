@@ -87,7 +87,7 @@ export const Cart = forwardRef<HTMLDivElement>((_, ref) => {
   const [showHeldBills, setShowHeldBills] = useState(false);
   const [showPrintDialog, setShowPrintDialog] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
-  const [customer, setCustomer] = useState({ name: '', phone: '', email: '', address: '', city: '', state: '', pincode: '' });
+  const [customer, setCustomer] = useState({ name: '', phone: '', email: '', address: '' });
   const [cartItemNotes, setCartItemNotes] = useState<Record<string, string>>({});
   const [showSplitDialog, setShowSplitDialog] = useState(false);
   const [splitPersons, setSplitPersons] = useState(2);
