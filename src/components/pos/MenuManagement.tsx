@@ -599,7 +599,7 @@ export const MenuManagement: React.FC = () => {
               <th className="text-right p-4 text-muted-foreground font-medium">Price</th>
               <th className="text-center p-4 text-muted-foreground font-medium">Variations</th>
               
-              {hasRecipeAccess && <th className="text-center p-4 text-muted-foreground font-medium">Recipe</th>}
+              
               <th className="text-center p-4 text-muted-foreground font-medium">Status</th>
               <th className="text-center p-4 text-muted-foreground font-medium">Actions</th>
             </tr>
