@@ -434,7 +434,7 @@ const SalesComparisonPage: React.FC = () => {
                   <label className="mb-1 block text-xs font-medium">Period A</label>
                   <DatePickerWithRange
                     date={{ from: rangeA.start, to: rangeA.end }}
-                    onDateChange={(d) => {
+                    setDate={(d) => {
                       if (d?.from && d?.to) setRangeA({ start: startOfDay(d.from), end: endOfDay(d.to), label: `${format(d.from, 'dd MMM')} – ${format(d.to, 'dd MMM')}` });
                     }}
                   />
@@ -443,7 +443,7 @@ const SalesComparisonPage: React.FC = () => {
                   <label className="mb-1 block text-xs font-medium">Period B</label>
                   <DatePickerWithRange
                     date={{ from: rangeB.start, to: rangeB.end }}
-                    onDateChange={(d) => {
+                    setDate={(d) => {
                       if (d?.from && d?.to) setRangeB({ start: startOfDay(d.from), end: endOfDay(d.to), label: `${format(d.from, 'dd MMM')} – ${format(d.to, 'dd MMM')}` });
                     }}
                   />
