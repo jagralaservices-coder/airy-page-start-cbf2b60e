@@ -1,89 +1,135 @@
 # 📊 Sales Reports — Availability Checklist
 
-Legend: ✅ Available  •  ❌ Not Available  •  🟡 Partial / Derivable
-
 ---
 
 ## ⏱️ Time-Based Reports
 
-- ✅ Daily Sales — `/cash-flow`, `DailySalesReport.tsx`, `/reports` (today)
-- ✅ Hourly Sales — `/reports/more?r=hourly`, `get_hourly_sales`
-- ✅ Weekly Sales — `/reports` (week range)
-- ✅ Monthly Sales — `/reports` (month range)
-- 🟡 Yearly Sales — supported via custom date range, no dedicated card
-- ✅ Sales Trend — `/advanced-reports → salesTrend`, `get_sales_trends`
-- ❌ Sales Comparison (period vs period) — not built
-- ❌ Sales Forecast — Revenue Forecast exists (`/revenue-forecast`), but no item/sales-level forecast
-- ✅ Revenue Trend — covered by Sales Trend + `/executive-dashboard`
-- ✅ Peak Hours Analysis — Hourly Sales report highlights peaks
+**✅ Available**
+- Daily Sales — `/cash-flow`, `DailySalesReport.tsx`, `/reports` (today)
+- Hourly Sales — `/reports/more?r=hourly`, `get_hourly_sales`
+- Weekly Sales — `/reports` (week range)
+- Monthly Sales — `/reports` (month range)
+- Sales Trend — `/advanced-reports → salesTrend`, `get_sales_trends`
+- Revenue Trend — covered by Sales Trend + `/executive-dashboard`
+- Peak Hours Analysis — Hourly Sales report highlights peaks
+
+**🟡 Partial / Derivable**
+- Yearly Sales — supported via custom date range, no dedicated card
+
+**❌ Not Available**
+- Sales Comparison (period vs period)
+- Sales Forecast — Revenue Forecast exists (`/revenue-forecast`), but no item/sales-level forecast
 
 ---
 
 ## 💰 Revenue & Financial Reports
 
-- ✅ Sales Summary — `/reports/sales`
-- 🟡 Gross Sales — shown as KPI on `/reports`, no dedicated card
-- 🟡 Net Sales — shown as KPI on `/reports`, no dedicated card
-- ✅ Revenue Report — `/reports`, `/executive-dashboard`
-- ✅ Revenue Analysis — `/advanced-reports`, `/admin/finance`
-- ✅ Tax Summary — `/reports/more?r=tax`, `get_tax_report`
-- ✅ Discount Summary — `/reports/more?r=discount`, `get_discount_report`
-- ✅ Average Bill Value (AOV) — KPI on `/reports` + Multi-Outlet report
-- 🟡 Gross Margin Analysis — inside P&L category breakdown
-- ✅ Profit Margin Report — `/advanced-reports → pl`, `get_pl_report`
+**✅ Available**
+- Sales Summary — `/reports/sales`
+- Revenue Report — `/reports`, `/executive-dashboard`
+- Revenue Analysis — `/advanced-reports`, `/admin/finance`
+- Tax Summary — `/reports/more?r=tax`, `get_tax_report`
+- Discount Summary — `/reports/more?r=discount`, `get_discount_report`
+- Average Bill Value (AOV) — KPI on `/reports` + Multi-Outlet report
+- Profit Margin Report — `/advanced-reports → pl`, `get_pl_report`
+
+**🟡 Partial / Derivable**
+- Gross Sales — shown as KPI on `/reports`, no dedicated card
+- Net Sales — shown as KPI on `/reports`, no dedicated card
+- Gross Margin Analysis — inside P&L category breakdown
+
+**❌ Not Available**
+- (none)
 
 ---
 
 ## 📦 Product & Category Reports
 
-- ✅ Product-wise Sales — `/reports/item`, `/reports/more?r=item`
-- ✅ Item-wise Sales — same as above
-- ✅ Category-wise Sales — `/reports/category`
-- ❌ Brand-wise Sales — no `brand` field on products
-- ✅ Product Performance Report — `AdvancedReportTabs → ItemPerformanceReport`
+**✅ Available**
+- Product-wise Sales — `/reports/item`, `/reports/more?r=item`
+- Item-wise Sales — same as above
+- Category-wise Sales — `/reports/category`
+- Product Performance Report — `AdvancedReportTabs → ItemPerformanceReport`
+
+**🟡 Partial / Derivable**
+- (none)
+
+**❌ Not Available**
+- Brand-wise Sales — no `brand` field on products
 
 ---
 
 ## 👥 Customer Reports
 
-- ✅ Customer-wise Sales — `/reports/more?r=customer`
-- 🟡 Customer Order History — visible inside `/customers` detail; no standalone report
-- ✅ Customer Purchase Analysis — `get_customer_analytics`, Customer Retention report
+**✅ Available**
+- Customer-wise Sales — `/reports/more?r=customer`
+- Customer Purchase Analysis — `get_customer_analytics`, Customer Retention report
+
+**🟡 Partial / Derivable**
+- Customer Order History — visible inside `/customers` detail; no standalone report
+
+**❌ Not Available**
+- (none)
 
 ---
 
 ## 🏪 Outlet & Location Reports
 
-- ✅ Outlet-wise Sales — `AdvancedReportTabs → MultiOutletReport`, `get_multi_outlet_report`
-- ✅ Branch-wise Sales — same (branches = outlets in this system)
-- ❌ Region-wise Sales — no region grouping on stores
-- ✅ Counter-wise Sales — `/reports/counter`
+**✅ Available**
+- Outlet-wise Sales — `AdvancedReportTabs → MultiOutletReport`, `get_multi_outlet_report`
+- Branch-wise Sales — same (branches = outlets in this system)
+- Counter-wise Sales — `/reports/counter`
+
+**🟡 Partial / Derivable**
+- (none)
+
+**❌ Not Available**
+- Region-wise Sales — no region grouping on stores
 
 ---
 
 ## 👤 Employee Reports
 
-- ✅ Salesperson Performance — `/reports/employee`, `AdvancedReportTabs → StaffPerformance`
-- ✅ Salesperson-wise Sales — `/reports/more?r=staff`
+**✅ Available**
+- Salesperson Performance — `/reports/employee`, `AdvancedReportTabs → StaffPerformance`
+- Salesperson-wise Sales — `/reports/more?r=staff`
+
+**🟡 Partial / Derivable**
+- (none)
+
+**❌ Not Available**
+- (none)
 
 ---
 
 ## 🧾 Order & Billing Reports
 
-- ✅ Bill-wise Sales — `/search-bill`, `/reports/order`
-- ✅ Order Statistics — `/reports/order`, `get_order_behavior`
-- ✅ Sales Order Report — `/reports/order`
-- ❌ Sales Return Report — no return/refund flow yet
-- ❌ Back Order Report — no back-order module
-- ❌ Quotation Report — no quotation module
+**✅ Available**
+- Bill-wise Sales — `/search-bill`, `/reports/order`
+- Order Statistics — `/reports/order`, `get_order_behavior`
+- Sales Order Report — `/reports/order`
+
+**🟡 Partial / Derivable**
+- (none)
+
+**❌ Not Available**
+- Sales Return Report — no return/refund flow yet
+- Back Order Report — no back-order module
+- Quotation Report — no quotation module
 
 ---
 
 ## 📈 Business Performance Reports
 
-- ❌ Sales Pipeline Report — no CRM pipeline module
-- ✅ Sales Analysis Report — `/advanced-reports` (multiple analysis tabs)
-- ✅ Forecast Report — `/revenue-forecast`
+**✅ Available**
+- Sales Analysis Report — `/advanced-reports` (multiple analysis tabs)
+- Forecast Report — `/revenue-forecast`
+
+**🟡 Partial / Derivable**
+- (none)
+
+**❌ Not Available**
+- Sales Pipeline Report — no CRM pipeline module
 
 ---
 
