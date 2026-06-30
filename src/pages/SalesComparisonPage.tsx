@@ -326,7 +326,7 @@ const SalesComparisonPage: React.FC = () => {
     { key: 'a', header: rangeA.label, format: (v) => (typeof v === 'number' ? v.toFixed(2) : v) },
     { key: 'b', header: rangeB.label, format: (v) => (typeof v === 'number' ? v.toFixed(2) : v) },
     { key: 'diff', header: 'Difference', format: (v) => (typeof v === 'number' ? v.toFixed(2) : v) },
-    { key: 'growth', header: 'Growth %', format: (v) => fmtPct(Number(v) || 0) },
+    { key: 'growth', header: 'Growth %', format: (v) => v === null || v === undefined ? '—' : fmtPct(Number(v)) },
   ];
 
   const handleCSV = () => exportToCSV(metricRows as any, exportColumns, fileBase);
