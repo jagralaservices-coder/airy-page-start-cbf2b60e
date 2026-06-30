@@ -483,16 +483,27 @@ const SalesComparisonPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg bg-muted/40 p-3 text-sm">
-              <div>
-                <Badge variant="secondary" className="mr-2">A</Badge>{rangeA.label}
-                <span className="mx-2 text-muted-foreground">vs</span>
-                <Badge variant="outline" className="mr-2">B</Badge>{rangeB.label}
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-muted/40 p-3 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">A</Badge>
+                <span>{rangeA.label} <span className="text-muted-foreground">({ordersA.length} rows)</span></span>
+                <span className="mx-1 text-muted-foreground">vs</span>
+                <Badge variant="outline">B</Badge>
+                <span>{rangeB.label} <span className="text-muted-foreground">({ordersB.length} rows)</span></span>
               </div>
               <Button size="sm" onClick={runComparison} disabled={loading}>
                 {loading ? 'Loading…' : 'Refresh'}
               </Button>
             </div>
+            {(ordersA.length === 0 || ordersB.length === 0) && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+                {ordersA.length === 0 && ordersB.length === 0
+                  ? 'Both periods have no orders for the selected filters.'
+                  : ordersA.length === 0
+                    ? `Period A (${rangeA.label}) has no orders — growth % will show "—".`
+                    : `Period B (${rangeB.label}) has no orders — growth % will show "—" (cannot divide by zero).`}
+              </div>
+            )}
           </CardContent>
         </Card>
 
