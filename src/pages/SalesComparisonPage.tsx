@@ -579,7 +579,7 @@ const SalesComparisonPage: React.FC = () => {
                     <td className={`py-2 text-right ${r.diff > 0 ? 'text-green-600' : r.diff < 0 ? 'text-red-600' : ''}`}>
                       {r.isCurrency ? formatCurrency(r.diff) : r.diff.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                     </td>
-                    <td className={`py-2 text-right ${r.growth > 0 ? 'text-green-600' : r.growth < 0 ? 'text-red-600' : ''}`}>
+                    <td className={`py-2 text-right ${(r.growth ?? 0) > 0 ? 'text-green-600' : (r.growth ?? 0) < 0 ? 'text-red-600' : 'text-muted-foreground'}`}>
                       {fmtPct(r.growth)}
                     </td>
                   </tr>
