@@ -394,6 +394,9 @@ const AppRoutes = () => {
       <Route path="/reports/more" element={
         <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><MoreReportsPage /></ProtectedRoute>
       } />
+      <Route path="/reports/sales-comparison" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><SalesComparisonPage /></ProtectedRoute>
+      } />
       <Route path="/staff-portal" element={
         <ProtectedRoute><StaffPortalPage /></ProtectedRoute>
       } />
