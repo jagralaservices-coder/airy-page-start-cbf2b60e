@@ -120,12 +120,13 @@ const presetRange = (preset: Granularity): { a: PeriodRange; b: PeriodRange } | 
   }
 };
 
-const growth = (a: number, b: number) => {
-  if (b === 0) return a === 0 ? 0 : 100;
+const growth = (a: number, b: number): number | null => {
+  if (b === 0 && a === 0) return null;        // no data either side → N/A
+  if (b === 0) return null;                    // can't divide by zero → N/A (avoid fake +100%)
   return ((a - b) / Math.abs(b)) * 100;
 };
 
-const fmtPct = (n: number) => `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
+const fmtPct = (n: number | null) => n === null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
 
 // ----- Component -----
 const SalesComparisonPage: React.FC = () => {
@@ -264,8 +265,8 @@ const SalesComparisonPage: React.FC = () => {
     return rows;
   }, [dimension, ordersA, ordersB, stores]);
 
-  const topPerformers = breakdown.filter(r => r.growth > 0).slice(0, 5);
-  const bottomPerformers = [...breakdown].sort((a, b) => a.growth - b.growth).slice(0, 5);
+  const topPerformers = breakdown.filter(r => (r.growth ?? 0) > 0).slice(0, 5);
+  const bottomPerformers = [...breakdown].sort((a, b) => (a.growth ?? 0) - (b.growth ?? 0)).slice(0, 5);
 
   // Charts data
   const chartData = useMemo(() => ([
@@ -325,7 +326,7 @@ const SalesComparisonPage: React.FC = () => {
     { key: 'a', header: rangeA.label, format: (v) => (typeof v === 'number' ? v.toFixed(2) : v) },
     { key: 'b', header: rangeB.label, format: (v) => (typeof v === 'number' ? v.toFixed(2) : v) },
     { key: 'diff', header: 'Difference', format: (v) => (typeof v === 'number' ? v.toFixed(2) : v) },
-    { key: 'growth', header: 'Growth %', format: (v) => fmtPct(Number(v) || 0) },
+    { key: 'growth', header: 'Growth %', format: (v) => v === null || v === undefined ? '—' : fmtPct(Number(v)) },
   ];
 
   const handleCSV = () => exportToCSV(metricRows as any, exportColumns, fileBase);
@@ -482,16 +483,27 @@ const SalesComparisonPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg bg-muted/40 p-3 text-sm">
-              <div>
-                <Badge variant="secondary" className="mr-2">A</Badge>{rangeA.label}
-                <span className="mx-2 text-muted-foreground">vs</span>
-                <Badge variant="outline" className="mr-2">B</Badge>{rangeB.label}
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-muted/40 p-3 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">A</Badge>
+                <span>{rangeA.label} <span className="text-muted-foreground">({ordersA.length} rows)</span></span>
+                <span className="mx-1 text-muted-foreground">vs</span>
+                <Badge variant="outline">B</Badge>
+                <span>{rangeB.label} <span className="text-muted-foreground">({ordersB.length} rows)</span></span>
               </div>
               <Button size="sm" onClick={runComparison} disabled={loading}>
                 {loading ? 'Loading…' : 'Refresh'}
               </Button>
             </div>
+            {(ordersA.length === 0 || ordersB.length === 0) && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200">
+                {ordersA.length === 0 && ordersB.length === 0
+                  ? 'Both periods have no orders for the selected filters.'
+                  : ordersA.length === 0
+                    ? `Period A (${rangeA.label}) has no orders — growth % will show "—".`
+                    : `Period B (${rangeB.label}) has no orders — growth % will show "—" (cannot divide by zero).`}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -505,8 +517,8 @@ const SalesComparisonPage: React.FC = () => {
                   {row.isCurrency ? formatCurrency(row.a) : row.a.toLocaleString()}
                 </div>
                 <div className="mt-1 flex items-center gap-1 text-xs">
-                  <TrendIcon value={row.growth} />
-                  <span className={row.growth > 0 ? 'text-green-600' : row.growth < 0 ? 'text-red-600' : ''}>
+                  <TrendIcon value={row.growth ?? 0} />
+                  <span className={(row.growth ?? 0) > 0 ? 'text-green-600' : (row.growth ?? 0) < 0 ? 'text-red-600' : 'text-muted-foreground'}>
                     {fmtPct(row.growth)}
                   </span>
                   <span className="text-muted-foreground">
@@ -578,7 +590,7 @@ const SalesComparisonPage: React.FC = () => {
                     <td className={`py-2 text-right ${r.diff > 0 ? 'text-green-600' : r.diff < 0 ? 'text-red-600' : ''}`}>
                       {r.isCurrency ? formatCurrency(r.diff) : r.diff.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                     </td>
-                    <td className={`py-2 text-right ${r.growth > 0 ? 'text-green-600' : r.growth < 0 ? 'text-red-600' : ''}`}>
+                    <td className={`py-2 text-right ${(r.growth ?? 0) > 0 ? 'text-green-600' : (r.growth ?? 0) < 0 ? 'text-red-600' : 'text-muted-foreground'}`}>
                       {fmtPct(r.growth)}
                     </td>
                   </tr>
