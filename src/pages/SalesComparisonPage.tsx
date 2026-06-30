@@ -265,8 +265,8 @@ const SalesComparisonPage: React.FC = () => {
     return rows;
   }, [dimension, ordersA, ordersB, stores]);
 
-  const topPerformers = breakdown.filter(r => r.growth > 0).slice(0, 5);
-  const bottomPerformers = [...breakdown].sort((a, b) => a.growth - b.growth).slice(0, 5);
+  const topPerformers = breakdown.filter(r => (r.growth ?? 0) > 0).slice(0, 5);
+  const bottomPerformers = [...breakdown].sort((a, b) => (a.growth ?? 0) - (b.growth ?? 0)).slice(0, 5);
 
   // Charts data
   const chartData = useMemo(() => ([
