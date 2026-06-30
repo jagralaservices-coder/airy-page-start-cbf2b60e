@@ -83,6 +83,7 @@ const WithdrawalPage = lazy(() => import("./pages/WithdrawalPage"));
 const CashTopUpPage = lazy(() => import("./pages/CashTopUpPage"));
 const AdvancedReportsPage = lazy(() => import("./pages/AdvancedReportsPage"));
 const MoreReportsPage = lazy(() => import("./pages/MoreReportsPage"));
+const SalesComparisonPage = lazy(() => import("./pages/SalesComparisonPage"));
 const CustomersPage = lazy(() => import("./pages/CustomersPage"));
 
 const KOTListingPage = lazy(() => import("./pages/KOTListingPage"));
