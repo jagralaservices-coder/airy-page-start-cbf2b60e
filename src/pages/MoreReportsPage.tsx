@@ -35,7 +35,11 @@ const MoreReportsPage: React.FC = () => {
     const start = new Date(now); start.setDate(now.getDate() - 7);
     return { from: start, to: now };
   });
-  const [active, setActive] = useState<ReportKey>('item');
+  const initialKey = ((): ReportKey => {
+    const k = new URLSearchParams(window.location.search).get('r') as ReportKey | null;
+    return k && REPORTS.some(r => r.key === k) ? k : 'item';
+  })();
+  const [active, setActive] = useState<ReportKey>(initialKey);
 
   const filteredOrders = useMemo<Order[]>(() => {
     const from = dateRange?.from ? new Date(dateRange.from).setHours(0,0,0,0) : 0;
