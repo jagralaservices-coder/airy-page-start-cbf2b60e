@@ -506,8 +506,8 @@ const SalesComparisonPage: React.FC = () => {
                   {row.isCurrency ? formatCurrency(row.a) : row.a.toLocaleString()}
                 </div>
                 <div className="mt-1 flex items-center gap-1 text-xs">
-                  <TrendIcon value={row.growth} />
-                  <span className={row.growth > 0 ? 'text-green-600' : row.growth < 0 ? 'text-red-600' : ''}>
+                  <TrendIcon value={row.growth ?? 0} />
+                  <span className={(row.growth ?? 0) > 0 ? 'text-green-600' : (row.growth ?? 0) < 0 ? 'text-red-600' : 'text-muted-foreground'}>
                     {fmtPct(row.growth)}
                   </span>
                   <span className="text-muted-foreground">
