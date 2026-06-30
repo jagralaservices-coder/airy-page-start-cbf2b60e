@@ -31,7 +31,14 @@ export const ReportsPage: React.FC = () => {
 
   const reportLinks = [
     { label: '⭐ Advanced Reports', path: '/advanced-reports', icon: Star, featureKey: 'advancedAnalytics' },
-    { label: '📊 More Reports (Item / Tax / Payment / Staff / Customer / Hourly / Discount / Inventory)', path: '/reports/more', icon: BarChart3 },
+    { label: 'Item-wise Sales', path: '/reports/more?r=item', icon: ShoppingCart },
+    { label: 'Tax & GST', path: '/reports/more?r=tax', icon: FileText },
+    { label: 'Payment Mode', path: '/reports/more?r=payment', icon: CreditCard },
+    { label: 'Staff Performance', path: '/reports/more?r=staff', icon: Users },
+    { label: 'Customer Report', path: '/reports/more?r=customer', icon: Users },
+    { label: 'Hourly / Day-wise', path: '/reports/more?r=hourly', icon: BarChart3 },
+    { label: 'Discount & Cancellation', path: '/reports/more?r=discount', icon: Percent },
+    { label: 'Inventory / Stock', path: '/reports/more?r=inventory', icon: Layers },
     { label: 'Category Summary', path: '/reports/category', icon: Layers },
     { label: 'Item Summary', path: '/reports/item', icon: ShoppingCart },
     { label: 'Sales Summary', path: '/reports/sales', icon: TrendingUp },
