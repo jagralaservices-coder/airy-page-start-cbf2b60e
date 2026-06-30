@@ -83,6 +83,7 @@ const WithdrawalPage = lazy(() => import("./pages/WithdrawalPage"));
 const CashTopUpPage = lazy(() => import("./pages/CashTopUpPage"));
 const AdvancedReportsPage = lazy(() => import("./pages/AdvancedReportsPage"));
 const MoreReportsPage = lazy(() => import("./pages/MoreReportsPage"));
+const SalesComparisonPage = lazy(() => import("./pages/SalesComparisonPage"));
 const CustomersPage = lazy(() => import("./pages/CustomersPage"));
 
 const KOTListingPage = lazy(() => import("./pages/KOTListingPage"));
@@ -392,6 +393,9 @@ const AppRoutes = () => {
       } />
       <Route path="/reports/more" element={
         <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><MoreReportsPage /></ProtectedRoute>
+      } />
+      <Route path="/reports/sales-comparison" element={
+        <ProtectedRoute allowedRoles={['super_admin', 'admin', 'owner', 'store_manager']} allowStoreLogin><SalesComparisonPage /></ProtectedRoute>
       } />
       <Route path="/staff-portal" element={
         <ProtectedRoute><StaffPortalPage /></ProtectedRoute>

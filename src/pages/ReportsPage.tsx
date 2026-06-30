@@ -31,6 +31,7 @@ export const ReportsPage: React.FC = () => {
 
   const reportLinks = [
     { label: '⭐ Advanced Reports', path: '/advanced-reports', icon: Star, featureKey: 'advancedAnalytics' },
+    { label: '📊 Sales Comparison', path: '/reports/sales-comparison', icon: BarChart3 },
     { label: 'Item-wise Sales', path: '/reports/more?r=item', icon: ShoppingCart },
     { label: 'Tax & GST', path: '/reports/more?r=tax', icon: FileText },
     { label: 'Payment Mode', path: '/reports/more?r=payment', icon: CreditCard },
