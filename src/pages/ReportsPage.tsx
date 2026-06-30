@@ -31,6 +31,7 @@ export const ReportsPage: React.FC = () => {
 
   const reportLinks = [
     { label: '⭐ Advanced Reports', path: '/advanced-reports', icon: Star, featureKey: 'advancedAnalytics' },
+    { label: '📊 More Reports (Item / Tax / Payment / Staff / Customer / Hourly / Discount / Inventory)', path: '/reports/more', icon: BarChart3 },
     { label: 'Category Summary', path: '/reports/category', icon: Layers },
     { label: 'Item Summary', path: '/reports/item', icon: ShoppingCart },
     { label: 'Sales Summary', path: '/reports/sales', icon: TrendingUp },
