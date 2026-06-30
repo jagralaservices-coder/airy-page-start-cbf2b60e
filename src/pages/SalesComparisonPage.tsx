@@ -120,12 +120,13 @@ const presetRange = (preset: Granularity): { a: PeriodRange; b: PeriodRange } | 
   }
 };
 
-const growth = (a: number, b: number) => {
-  if (b === 0) return a === 0 ? 0 : 100;
+const growth = (a: number, b: number): number | null => {
+  if (b === 0 && a === 0) return null;        // no data either side → N/A
+  if (b === 0) return null;                    // can't divide by zero → N/A (avoid fake +100%)
   return ((a - b) / Math.abs(b)) * 100;
 };
 
-const fmtPct = (n: number) => `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
+const fmtPct = (n: number | null) => n === null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`;
 
 // ----- Component -----
 const SalesComparisonPage: React.FC = () => {
